@@ -1,15 +1,15 @@
-import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
+import { pgTable, text, varchar, integer, boolean, timestamp, real } from 'drizzle-orm/pg-core';
 
-export const users = sqliteTable('users', {
+export const users = pgTable('users', {
   id: text('id').primaryKey(),
   name: text('name'),
   email: text('email').notNull().unique(),
-  emailVerified: integer('emailVerified', { mode: 'timestamp' }),
+  emailVerified: timestamp('emailVerified', { mode: 'date' }),
   image: text('image'),
-  createdAt: integer('createdAt', { mode: 'timestamp' }).$defaultFn(() => new Date()),
+  createdAt: timestamp('createdAt', { mode: 'date' }).defaultNow(),
 });
 
-export const accounts = sqliteTable('accounts', {
+export const accounts = pgTable('accounts', {
   id: text('id').primaryKey(),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
   type: text('type').notNull(),
@@ -24,62 +24,63 @@ export const accounts = sqliteTable('accounts', {
   session_state: text('session_state'),
 });
 
-export const sessions = sqliteTable('sessions', {
+export const sessions = pgTable('sessions', {
   id: text('id').primaryKey(),
   sessionToken: text('sessionToken').notNull().unique(),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  expires: integer('expires', { mode: 'timestamp' }).notNull(),
+  expires: timestamp('expires', { mode: 'date' }).notNull(),
 });
 
-export const interviews = sqliteTable('interviews', {
+export const interviews = pgTable('interviews', {
   id: text('id').primaryKey(),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
   role: text('role').notNull(),
   experienceLevel: text('experienceLevel').notNull(),
-  techStack: text('techStack').notNull(), // Comma-separated or JSON
-  status: text('status', { enum: ['in-progress', 'completed', 'cancelled'] }).notNull().default('in-progress'),
+  techStack: text('techStack').notNull(),
+  status: text('status').notNull().default('in-progress'),
   score: integer('score'),
   communicationScore: integer('communicationScore'),
   technicalScore: integer('technicalScore'),
   confidenceScore: integer('confidenceScore'),
-  duration: integer('duration'), // In seconds
-  feedback: text('feedback'), // JSON string
+  duration: integer('duration'),
+  feedback: text('feedback'),
   createdAt: text('createdAt').notNull(),
   completedAt: text('completedAt'),
 });
 
-export const questions = sqliteTable('questions', {
+export const questions = pgTable('questions', {
   id: text('id').primaryKey(),
   interviewId: text('interviewId').notNull().references(() => interviews.id, { onDelete: 'cascade' }),
   text: text('text').notNull(),
   answer: text('answer'),
   feedback: text('feedback'),
   score: integer('score'),
-  type: text('type').notNull(), // 'technical', 'behavioral', etc.
+  type: text('type').notNull(),
 });
 
-export const codingSubmissions = sqliteTable('coding_submissions', {
+export const codingSubmissions = pgTable('coding_submissions', {
   id: text('id').primaryKey(),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
   language: text('language').notNull(),
   code: text('code').notNull(),
-  status: text('status').notNull(), // 'Accepted', 'Wrong Answer', etc.
+  status: text('status').notNull(),
   runtime: real('runtime'),
   memory: real('memory'),
   score: integer('score'),
   createdAt: text('createdAt').notNull(),
 });
 
-export const notifications = sqliteTable('notifications', {
+export const notifications = pgTable('notifications', {
   id: text('id').primaryKey(),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   message: text('message').notNull(),
-  type: text('type').notNull(), // 'interview', 'coding', 'system'
-  isRead: integer('isRead', { mode: 'boolean' }).notNull().default(false),
+  type: text('type').notNull(),
+  isRead: boolean('isRead').notNull().default(false),
   createdAt: text('createdAt').notNull(),
 });
-export const resumes = sqliteTable('resumes', {
+
+export const resumes = pgTable('resumes', {
   id: text('id').primaryKey(),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
   fileName: text('fileName').notNull(),
