@@ -53,7 +53,7 @@ export default function InterviewRoomPage() {
   const [micPermission, setMicPermission] = useState<"granted" | "denied" | "prompt">("prompt");
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!currentInterview) {
@@ -113,7 +113,9 @@ export default function InterviewRoomPage() {
     }
 
     return () => {
-      clearInterval(timerRef.current);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
       if (recognitionRef.current) {
         recognitionRef.current.onend = null;
         recognitionRef.current.stop();
