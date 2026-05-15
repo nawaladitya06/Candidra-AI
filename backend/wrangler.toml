@@ -1,0 +1,12 @@
+name = "hiremind-backend"
+main = "src/index.ts"
+compatibility_date = "2024-04-03"
+
+[vars]
+GEMINI_API_KEY = "PLACEHOLDER"
+PISTON_API_URL = "https://emkc.org/api/v2/piston"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hiremind_db"
+database_id = "PLACEHOLDER"

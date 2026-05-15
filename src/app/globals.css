@@ -1,0 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #030303;
+  --foreground: #f8fafc;
+  
+  --card: #0a0a0f;
+  --card-foreground: #f8fafc;
+  
+  --popover: #0a0a0f;
+  --popover-foreground: #f8fafc;
+  
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+  
+  --secondary: #1e1b4b;
+  --secondary-foreground: #f8fafc;
+  
+  --muted: #0f172a;
+  --muted-foreground: #64748b;
+  
+  --accent: #8b5cf6;
+  --accent-foreground: #f8fafc;
+  
+  --destructive: #ef4444;
+  --destructive-foreground: #f8fafc;
+  
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #8b5cf6;
+  
+  --radius: 1rem;
+
+  --neon-purple: #8b5cf6;
+  --neon-blue: #3b82f6;
+  --neon-cyan: #06b6d4;
+  --glass-bg: rgba(10, 10, 15, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+@layer base {
+  * {
+    @apply border-border selection:bg-purple-500/30 selection:text-white;
+  }
+  body {
+    @apply bg-background text-foreground antialiased overflow-x-hidden;
+    font-family: 'Inter', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-slate-950/60 backdrop-blur-xl border border-white/10;
+  }
+  
+  .glass-card {
+    @apply bg-white/[0.02] backdrop-blur-md border border-white/10 rounded-2xl transition-all duration-500;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .glass-card:hover {
+    @apply border-white/20 bg-white/[0.04];
+    box-shadow: 0 0 40px rgba(139, 92, 246, 0.1);
+  }
+
+  .btn-primary {
+    @apply relative overflow-hidden px-8 py-3.5 rounded-full font-semibold text-white transition-all duration-300;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  }
+
+  .btn-primary:hover {
+    @apply scale-[1.02] brightness-110;
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+  }
+
+  .btn-secondary {
+    @apply px-8 py-3.5 rounded-full font-semibold text-slate-300 transition-all duration-300 border border-white/10 bg-white/5;
+  }
+
+  .btn-secondary:hover {
+    @apply bg-white/10 text-white border-white/20;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-indigo-400 to-cyan-400;
+  }
+
+  .input-field {
+    @apply w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500/40 transition-all;
+  }
+
+  .badge {
+    @apply px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest border;
+  }
+  
+  .badge-purple { @apply bg-purple-500/10 border-purple-500/20 text-purple-400; }
+  .badge-blue { @apply bg-blue-500/10 border-blue-500/20 text-blue-400; }
+  .badge-green { @apply bg-green-500/10 border-green-500/20 text-green-400; }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #030303;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Animations & Effects */
+.glow-purple {
+  box-shadow: 0 0 120px -20px rgba(139, 92, 246, 0.25);
+}
+
+.spotlight-overlay {
+  background: radial-gradient(
+    800px circle at var(--mouse-x) var(--mouse-y),
+    rgba(255,255,255,0.06),
+    transparent 40%
+  );
+}
+
+.grid-pattern {
+  background-size: 60px 60px;
+  background-image: 
+    linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+}
+
+.mesh-gradient {
+  background: radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 25%),
+              radial-gradient(circle at 85% 30%, rgba(6, 182, 212, 0.15), transparent 25%);
+}
+
+.sidebar-link {
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-slate-500 hover:text-white hover:bg-white/5 mb-1;
+}
+
+.sidebar-link.active {
+  @apply text-white bg-purple-500/10 border border-purple-500/20;
+}
+
+.card-stack {
+  position: relative;
+}
+
+.card-stack::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: -10px;
+  bottom: -10px;
+  background: rgba(139, 92, 246, 0.05);
+  border-radius: 1rem;
+  z-index: -1;
+}
+
+.section-spacing {
+  @apply py-24 md:py-32 lg:py-40;
+}
+
+.container-custom {
+  @apply max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12;
+}

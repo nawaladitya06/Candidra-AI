@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /interview/room/
+Disallow: /api/
+
+Sitemap: https://hiremind.ai/sitemap.xml
