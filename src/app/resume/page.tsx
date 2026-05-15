@@ -23,7 +23,7 @@ interface ResumeUploadResponse {
   message?: string;
 }
 
-interface Question {
+interface AIQuestion {
   text: string;
   type: string;
   difficulty: string;
@@ -34,7 +34,7 @@ export default function ResumePage() {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<AIQuestion[]>([]);
   const router = useRouter();
   const { setCurrentInterview, addInterview } = useAppStore();
 
@@ -89,7 +89,7 @@ export default function ResumePage() {
       });
 
       if (!response.ok) throw new Error("AI Analysis failed");
-      const genQuestions = (await response.json()) as Question[];
+      const genQuestions = (await response.json()) as AIQuestion[];
 
       setAnalysis({
         name: "Candidate Profile",
@@ -118,7 +118,11 @@ export default function ResumePage() {
       techStack: analysis.skills,
       status: "in-progress" as const,
       createdAt: new Date().toISOString(),
-      questions: questions.map(q => ({ ...q, type: q.type as any }))
+      questions: questions.map(q => ({
+        id: crypto.randomUUID(),
+        text: q.text,
+        type: q.type as any, // Cast to store's supported types
+      }))
     };
 
     addInterview(newInterview);
