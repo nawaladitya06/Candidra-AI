@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@cloudflare/workers-types": "^4.20260515.1",
+    "@cloudflare/workers-types": "^4.20240512.0",
     "@google/generative-ai": "^0.24.1",
     "@hono/zod-validator": "^0.8.0",
     "drizzle-orm": "^0.45.2",
