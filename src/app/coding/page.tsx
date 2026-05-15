@@ -70,20 +70,13 @@ export default function CodingPage() {
     setActiveTab("testcases");
     
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8787"}/coding/execute`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          source_code: code,
-          language: (selectedLang as any).pistonLang,
-          version: (selectedLang as any).pistonVersion,
-          stdin: ""
-        }),
+      const { executeCode } = await import("@/lib/coding-actions");
+      const result = await executeCode({
+        source_code: code,
+        language: (selectedLang as any).pistonLang,
+        version: (selectedLang as any).pistonVersion,
+        stdin: ""
       });
-
-      if (!response.ok) throw new Error("Execution failed");
-      
-      const result = (await response.json()) as PistonExecutionResult;
       
       if (result.stdout) {
         setOutput(`> Output:\n${result.stdout}`);
