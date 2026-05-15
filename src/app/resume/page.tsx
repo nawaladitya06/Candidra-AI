@@ -16,6 +16,13 @@ import { generateResumeQuestions } from "@/lib/gemini";
 import { useAppStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
 
+interface ResumeUploadResponse {
+  fileKey: string;
+  fileUrl: string;
+  success: boolean;
+  message?: string;
+}
+
 export default function ResumePage() {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -55,7 +62,7 @@ export default function ResumePage() {
       });
 
       if (!uploadRes.ok) throw new Error("Upload failed");
-      const { fileKey } = await uploadRes.json();
+      const { fileKey } = (await uploadRes.json()) as ResumeUploadResponse;
 
       // 2. In a real production app, we'd extract text from the PDF.
       // Since PDF parsing is complex in Edge, we'll simulate the text extraction
