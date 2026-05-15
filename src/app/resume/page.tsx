@@ -23,11 +23,18 @@ interface ResumeUploadResponse {
   message?: string;
 }
 
+interface Question {
+  text: string;
+  type: string;
+  difficulty: string;
+  followUp?: string;
+}
+
 export default function ResumePage() {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
-  const [questions, setQuestions] = useState<any[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const router = useRouter();
   const { setCurrentInterview, addInterview } = useAppStore();
 
@@ -82,7 +89,7 @@ export default function ResumePage() {
       });
 
       if (!response.ok) throw new Error("AI Analysis failed");
-      const genQuestions = await response.json();
+      const genQuestions = (await response.json()) as Question[];
 
       setAnalysis({
         name: "Candidate Profile",
