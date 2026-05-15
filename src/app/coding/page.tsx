@@ -14,6 +14,15 @@ import { PROGRAMMING_LANGUAGES, cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 
+type PistonExecutionResult = {
+  stdout?: string;
+  stderr?: string;
+  compile_output?: string;
+  output?: string;
+  time?: string;
+  memory?: string;
+};
+
 export default function CodingPage() {
   const [selectedLang, setSelectedLang] = useState(PROGRAMMING_LANGUAGES[0]);
   const [code, setCode] = useState(selectedLang.template);
@@ -66,7 +75,7 @@ export default function CodingPage() {
 
       if (!response.ok) throw new Error("Execution failed");
       
-      const result = await response.json();
+      const result = (await response.json()) as PistonExecutionResult;
       
       if (result.stdout) {
         setOutput(`> Output:\n${result.stdout}`);
