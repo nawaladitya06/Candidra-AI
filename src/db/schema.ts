@@ -1,15 +1,15 @@
-import { pgTable, text, varchar, integer, boolean, timestamp, real } from 'drizzle-orm/pg-core';
+import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
 
-export const users = pgTable('users', {
+export const users = sqliteTable('users', {
   id: text('id').primaryKey(),
   name: text('name'),
   email: text('email').notNull().unique(),
-  emailVerified: timestamp('emailVerified', { mode: 'date' }),
+  emailVerified: integer('emailVerified', { mode: 'timestamp' }),
   image: text('image'),
-  createdAt: timestamp('createdAt', { mode: 'date' }).defaultNow(),
+  createdAt: integer('createdAt', { mode: 'timestamp' }).$defaultFn(() => new Date()),
 });
 
-export const accounts = pgTable('accounts', {
+export const accounts = sqliteTable('accounts', {
   id: text('id').primaryKey(),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
   type: text('type').notNull(),
@@ -24,14 +24,14 @@ export const accounts = pgTable('accounts', {
   session_state: text('session_state'),
 });
 
-export const sessions = pgTable('sessions', {
+export const sessions = sqliteTable('sessions', {
   id: text('id').primaryKey(),
   sessionToken: text('sessionToken').notNull().unique(),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  expires: timestamp('expires', { mode: 'date' }).notNull(),
+  expires: integer('expires', { mode: 'timestamp' }).notNull(),
 });
 
-export const interviews = pgTable('interviews', {
+export const interviews = sqliteTable('interviews', {
   id: text('id').primaryKey(),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
   role: text('role').notNull(),
@@ -48,7 +48,7 @@ export const interviews = pgTable('interviews', {
   completedAt: text('completedAt'),
 });
 
-export const questions = pgTable('questions', {
+export const questions = sqliteTable('questions', {
   id: text('id').primaryKey(),
   interviewId: text('interviewId').notNull().references(() => interviews.id, { onDelete: 'cascade' }),
   text: text('text').notNull(),
@@ -58,7 +58,7 @@ export const questions = pgTable('questions', {
   type: text('type').notNull(),
 });
 
-export const codingSubmissions = pgTable('coding_submissions', {
+export const codingSubmissions = sqliteTable('coding_submissions', {
   id: text('id').primaryKey(),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
   language: text('language').notNull(),
@@ -70,17 +70,17 @@ export const codingSubmissions = pgTable('coding_submissions', {
   createdAt: text('createdAt').notNull(),
 });
 
-export const notifications = pgTable('notifications', {
+export const notifications = sqliteTable('notifications', {
   id: text('id').primaryKey(),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   message: text('message').notNull(),
   type: text('type').notNull(),
-  isRead: boolean('isRead').notNull().default(false),
+  isRead: integer('isRead', { mode: 'boolean' }).notNull().default(0),
   createdAt: text('createdAt').notNull(),
 });
 
-export const resumes = pgTable('resumes', {
+export const resumes = sqliteTable('resumes', {
   id: text('id').primaryKey(),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
   fileName: text('fileName').notNull(),

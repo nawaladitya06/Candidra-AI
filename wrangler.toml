@@ -1,0 +1,13 @@
+name = "hiremind-ai"
+compatibility_date = "2024-04-03"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".next"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hiremind_db"
+database_id = "PLACEHOLDER_D1_DATABASE_ID"
+
+[vars]
+NEXTAUTH_URL = "http://localhost:3000"
+GEMINI_API_KEY = "PLACEHOLDER"

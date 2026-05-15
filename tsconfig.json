@@ -17,7 +17,9 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "types": [
-      "node"
+      "node",
+      "react",
+      "react-dom"
     ],
     "incremental": true,
     "plugins": [
