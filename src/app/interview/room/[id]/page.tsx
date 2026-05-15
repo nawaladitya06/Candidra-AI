@@ -117,7 +117,7 @@ export default function InterviewRoomPage() {
         clearInterval(timerRef.current);
       }
       if (recognitionRef.current) {
-        recognitionRef.current.onend = null;
+        recognitionRef.current.onend = () => {};
         recognitionRef.current.stop();
       }
     };
