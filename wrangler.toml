@@ -1,6 +1,7 @@
 name = "hiremind-ai"
 compatibility_date = "2024-04-03"
-pages_build_output_dir = ".next"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".open-next"
 
 [[d1_databases]]
 binding = "DB"
