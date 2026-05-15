@@ -3,7 +3,6 @@ import { auth } from "@/auth";
 import { getDb } from "@/db";
 import { resumes } from "@/db/schema";
 import { getStorageProvider } from "@/lib/storage";
-import { v4 as uuidv4 } from "uuid";
 
 export const runtime = "edge";
 
@@ -30,7 +29,7 @@ export async function POST(req: NextRequest) {
     // Save metadata to D1 (Persistence)
     const db = getDb();
     await db.insert(resumes).values({
-      id: uuidv4(),
+      id: crypto.randomUUID(),
       userId: session.user.id,
       fileName: file.name,
       fileKey: key,
