@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, Search, Command, CheckCircle2, AlertTriangle, MessageSquare, Loader2 } from "lucide-react";
 import { useAppStore } from "@/lib/store";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
