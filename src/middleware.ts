@@ -1,7 +1,11 @@
 import { auth } from "@/auth"
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 
-export default auth((req) => {
-  const isLoggedIn = !!req.auth
+export default async function middleware(req: NextRequest) {
+  const session = await auth()
+  const isLoggedIn = !!session
+  
   const isOnDashboard = req.nextUrl.pathname.startsWith("/dashboard")
   const isOnInterview = req.nextUrl.pathname.startsWith("/interview")
   const isOnCoding = req.nextUrl.pathname.startsWith("/coding")
@@ -11,12 +15,12 @@ export default auth((req) => {
 
   if (isOnDashboard || isOnInterview || isOnCoding || isOnResume || isOnSettings || isOnReports) {
     if (!isLoggedIn) {
-      return Response.redirect(new URL("/login", req.nextUrl))
+      return NextResponse.redirect(new URL("/login", req.nextUrl))
     }
   }
 
-  return
-})
+  return NextResponse.next()
+}
 
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
