@@ -112,8 +112,12 @@ export function Sidebar() {
         <div className="p-4 border-t border-white/10 relative">
           <div className="p-4 rounded-2xl bg-white/5 border border-white/5 mb-4">
              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 flex-shrink-0 rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center font-bold text-white text-xs">
-                   {user?.name?.[0] || "U"}
+                <div className="w-8 h-8 flex-shrink-0 rounded-full overflow-hidden bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center font-bold text-white text-xs">
+                   {user?.image ? (
+                     <img src={user.image} alt={user.name || "User"} className="w-full h-full object-cover" />
+                   ) : (
+                     user?.name?.[0] || "U"
+                   )}
                 </div>
                 <div className="min-w-0">
                    <p className="text-sm font-bold text-white truncate">{user?.name || "User"}</p>

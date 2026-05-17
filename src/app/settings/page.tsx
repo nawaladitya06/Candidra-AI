@@ -40,6 +40,28 @@ export default function SettingsPage() {
   // Billing Interval State
   const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('monthly');
 
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("Image size must be less than 2MB");
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (user) {
+          setUser({
+            ...user,
+            image: reader.result as string
+          });
+          toast.success("Avatar updated successfully!", { icon: "📸" });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleGeneralSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -119,9 +141,24 @@ export default function SettingsPage() {
          <div className="lg:col-span-1 space-y-6">
             <GlassCard className="p-6 border-white/5">
                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center font-black text-white text-2xl shadow-xl">
-                     {user?.name?.[0] || "U"}
-                  </div>
+                   <div className="relative group w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center font-black text-white text-2xl shadow-xl border border-white/10 cursor-pointer">
+                      {user?.image ? (
+                         <img src={user.image} alt={user.name || "User"} className="w-full h-full object-cover" />
+                      ) : (
+                         user?.name?.[0] || "U"
+                      )}
+                      
+                      {/* Hover overlay to change avatar */}
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center">
+                         <span className="text-[9px] font-black uppercase tracking-wider text-white">Change</span>
+                         <input 
+                            type="file" 
+                            accept="image/*"
+                            onChange={handleAvatarChange}
+                            className="absolute inset-0 opacity-0 cursor-pointer" 
+                         />
+                      </div>
+                   </div>
                   <div>
                      <h3 className="text-lg font-bold text-white truncate max-w-[150px]">{user?.name || "User"}</h3>
                      <p className="text-xs font-bold text-slate-500 truncate max-w-[150px]">{user?.email || "user@example.com"}</p>
@@ -218,6 +255,45 @@ export default function SettingsPage() {
                             </div>
                          </div>
                       </div>
+
+                       {/* Profile Photo Row */}
+                       <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-3">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">Avatar Image</label>
+                          <div className="flex items-center gap-4">
+                             <div className="w-12 h-12 rounded-xl overflow-hidden bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center font-bold text-white text-base shadow-md">
+                                {user?.image ? (
+                                   <img src={user.image} alt="Avatar Preview" className="w-full h-full object-cover" />
+                                ) : (
+                                   fullName?.[0] || "U"
+                                )}
+                             </div>
+                             <div className="flex gap-2">
+                                <label className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs cursor-pointer transition-colors shadow-md">
+                                   Upload Photo
+                                   <input 
+                                      type="file" 
+                                      accept="image/*"
+                                      onChange={handleAvatarChange}
+                                      className="hidden" 
+                                   />
+                                </label>
+                                {user?.image && (
+                                   <button 
+                                      type="button"
+                                      onClick={() => {
+                                         if (user) {
+                                            setUser({ ...user, image: undefined });
+                                            toast.success("Avatar removed");
+                                         }
+                                      }}
+                                      className="px-4 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 font-bold text-xs transition-colors border border-red-500/20"
+                                   >
+                                      Remove
+                                   </button>
+                                )}
+                             </div>
+                          </div>
+                       </div>
 
                       <div className="space-y-2">
                          <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Target Role</label>

@@ -153,8 +153,12 @@ export function TopBar() {
               <p className="text-xs font-black text-white">{user?.name}</p>
               <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest">Master Level</p>
            </div>
-           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center font-black text-white text-sm shadow-xl">
-              {user?.name?.[0] || "U"}
+           <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center font-black text-white text-sm shadow-xl">
+              {user?.image ? (
+                <img src={user.image} alt={user.name || "User"} className="w-full h-full object-cover" />
+              ) : (
+                user?.name?.[0] || "U"
+              )}
            </div>
         </div>
       </div>
