@@ -17,32 +17,28 @@ export default function LoginPage() {
   const router = useRouter();
   const { setUser, setAuthenticated } = useAppStore();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate API Auth
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      setUser({
-        id: `user-${Date.now()}`,
-        name: email.split("@")[0] || "User",
-        email: email,
-        plan: "pro",
-        joinedAt: new Date().toISOString(),
-        interviewsCompleted: 0,
-        avgScore: 0,
-        role: "Software Engineer",
+    try {
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
       });
-      setAuthenticated(true);
-      if (typeof document !== "undefined") {
-        document.cookie = "hiremind-logged-in=true; path=/; max-age=604800; SameSite=Lax";
+
+      if (res?.error) {
+        toast.error("Invalid email or password.");
+      } else {
+        toast.success("Welcome back to HireMind AI!");
+        router.push("/dashboard");
       }
-      
-      toast.success("Welcome back to HireMind AI!");
-      router.push("/dashboard");
-    }, 1500);
+    } catch (err) {
+      toast.error("An error occurred during login.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

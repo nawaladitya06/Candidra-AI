@@ -22,6 +22,7 @@ export function StoreSync() {
         joinedAt: new Date().toISOString(),
         interviewsCompleted: 0,
         avgScore: 0,
+        role: (session.user as any).role || "user",
       });
 
       const fetchUserData = async () => {
