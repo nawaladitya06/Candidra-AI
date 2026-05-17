@@ -26,6 +26,7 @@ export function getDb() {
             sql,
             params,
           }),
+          cache: 'no-store',
         }
       );
 
