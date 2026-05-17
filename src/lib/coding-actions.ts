@@ -28,5 +28,7 @@ export async function executeCode(params: {
     output: data.run?.output || "",
     code: data.run?.code,
     compile_output: data.compile?.output || "",
+    time: data.run?.time !== undefined ? String(data.run.time) : "0.05",
+    memory: data.run?.memory !== undefined ? String(data.run.memory) : "120",
   };
 }

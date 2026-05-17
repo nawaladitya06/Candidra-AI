@@ -38,13 +38,13 @@
     "react-dropzone": "^15.0.0",
     "react-hook-form": "^7.75.0",
     "react-hot-toast": "^2.6.0",
+    "react-is": "^19.2.6",
     "recharts": "^3.8.1",
     "tailwind-merge": "^3.6.0",
     "zod": "^4.4.3",
     "zustand": "^5.0.13"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240512.0",
     "@types/node": "^25.8.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

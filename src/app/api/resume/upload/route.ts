@@ -4,8 +4,6 @@ import { getDb } from "@/db";
 import { resumes } from "@/db/schema";
 import { getStorageProvider } from "@/lib/storage";
 
-export const runtime = "edge";
-
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) {
