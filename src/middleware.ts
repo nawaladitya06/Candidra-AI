@@ -1,10 +1,13 @@
-import { auth } from "@/auth"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 export default async function middleware(req: NextRequest) {
-  const session = await auth()
-  const isLoggedIn = req.cookies.has("hiremind-logged-in") || !!session
+  const isLoggedIn = 
+    req.cookies.has("hiremind-logged-in") || 
+    req.cookies.has("authjs.session-token") || 
+    req.cookies.has("__Secure-authjs.session-token") ||
+    req.cookies.has("next-auth.session-token") ||
+    req.cookies.has("__Secure-next-auth.session-token")
   
   const isOnDashboard = req.nextUrl.pathname.startsWith("/dashboard")
   const isOnInterview = req.nextUrl.pathname.startsWith("/interview")
