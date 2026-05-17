@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAppStore } from "@/lib/store";
+import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -99,8 +100,19 @@ export default function RegisterPage() {
              </div>
 
              <div className="space-y-4 mb-8">
-               <button className="w-full flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/5 py-3 rounded-xl text-sm font-bold text-slate-300 transition-all">
+               <button 
+                 type="button"
+                 onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+                 className="w-full flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/5 py-3 rounded-xl text-sm font-bold text-slate-300 transition-all"
+               >
                   <Chrome className="w-5 h-5 text-blue-500" /> Sign up with Google
+               </button>
+               <button 
+                 type="button"
+                 onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
+                 className="w-full flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/5 py-3 rounded-xl text-sm font-bold text-slate-300 transition-all"
+               >
+                  <Github className="w-5 h-5 text-white" /> Sign up with GitHub
                </button>
              </div>
 
