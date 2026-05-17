@@ -39,6 +39,9 @@ export default function RegisterPage() {
         role: "New User",
       });
       setAuthenticated(true);
+      if (typeof document !== "undefined") {
+        document.cookie = "hiremind-logged-in=true; path=/; max-age=604800; SameSite=Lax";
+      }
 
       toast.success("Account created successfully! Welcome to HireMind.");
       router.push("/dashboard");

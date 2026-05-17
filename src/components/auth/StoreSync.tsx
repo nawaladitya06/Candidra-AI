@@ -10,6 +10,9 @@ export function StoreSync() {
 
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
+      if (typeof document !== "undefined") {
+        document.cookie = "hiremind-logged-in=true; path=/; max-age=604800; SameSite=Lax";
+      }
       setUser({
         id: session.user.id as string,
         name: session.user.name || "",

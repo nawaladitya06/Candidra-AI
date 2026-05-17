@@ -123,7 +123,12 @@ export const useAppStore = create<AppState>()(
       setCurrentInterview: (interview) => set({ currentInterview: interview }),
       toggleSidebar: () =>
         set((state) => ({ sidebarOpen: !state.sidebarOpen })),
-      logout: () => set({ user: null, isAuthenticated: false, interviews: [], resumes: [], notifications: [] }),
+      logout: () => {
+        if (typeof document !== "undefined") {
+          document.cookie = "hiremind-logged-in=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        }
+        set({ user: null, isAuthenticated: false, interviews: [], resumes: [], notifications: [] });
+      },
     }),
     { name: "hiremind-store" }
   )

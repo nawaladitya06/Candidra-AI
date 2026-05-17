@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server"
 
 export default async function middleware(req: NextRequest) {
   const session = await auth()
-  const isLoggedIn = !!session
+  const isLoggedIn = req.cookies.has("hiremind-logged-in") || !!session
   
   const isOnDashboard = req.nextUrl.pathname.startsWith("/dashboard")
   const isOnInterview = req.nextUrl.pathname.startsWith("/interview")

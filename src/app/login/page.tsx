@@ -35,6 +35,9 @@ export default function LoginPage() {
         role: "Software Engineer",
       });
       setAuthenticated(true);
+      if (typeof document !== "undefined") {
+        document.cookie = "hiremind-logged-in=true; path=/; max-age=604800; SameSite=Lax";
+      }
       
       toast.success("Welcome back to HireMind AI!");
       router.push("/dashboard");
