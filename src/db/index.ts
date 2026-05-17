@@ -41,23 +41,13 @@ export function getDb() {
       }
 
       const queryResult = data.result?.[0];
-      const columns = queryResult?.columns || [];
-      const rawRows = queryResult?.rows || [];
-
-      // Map raw arrays back to column-mapped objects for Drizzle ORM
-      const rows = rawRows.map((row: any[]) => {
-        const obj: any = {};
-        columns.forEach((col: string, idx: number) => {
-          obj[col] = row[idx];
-        });
-        return obj;
-      });
+      const rawRows = queryResult?.results?.rows || [];
 
       if (method === 'get') {
-        return { rows: rows[0] ? [rows[0]] : [] };
+        return { rows: rawRows[0] || [] };
       }
 
-      return { rows };
+      return { rows: rawRows };
     } catch (error) {
       console.error('D1 Proxy Error:', error);
       throw error;
