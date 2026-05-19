@@ -1,4 +1,4 @@
-# HireMind AI - Full Stack Project
+# Candidra AI - Full Stack Project
 
 This project is divided into two main components:
 
