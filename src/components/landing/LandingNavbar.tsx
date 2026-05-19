@@ -39,8 +39,8 @@ export function LandingNavbar() {
       >
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center shadow-[0_0_20px_rgba(139,92,246,0.3)] group-hover:scale-105 transition-transform">
-            <Brain className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center shadow-[0_0_20px_rgba(139,92,246,0.3)] group-hover:scale-105 transition-transform">
+            <img src="/icon.png" alt="Candidra AI Logo" className="w-full h-full object-cover" />
           </div>
           <span className="text-xl font-black text-white tracking-tighter hidden md:block">Candidra AI</span>
         </Link>

@@ -73,8 +73,8 @@ export default function RegisterPage() {
       <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
          {/* Branding Side */}
          <div className="hidden lg:block space-y-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center shadow-lg">
-               <Brain className="w-9 h-9 text-white" />
+            <div className="w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center shadow-lg">
+               <img src="/icon.png" alt="Candidra AI Logo" className="w-full h-full object-cover" />
             </div>
             <h1 className="text-5xl font-bold text-white leading-tight">
                Build your future <br /> with <span className="gradient-text">Candidra AI</span>.
