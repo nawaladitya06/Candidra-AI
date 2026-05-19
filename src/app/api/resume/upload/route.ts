@@ -3,7 +3,6 @@ import { auth } from "@/auth";
 import { getDb } from "@/db";
 import { resumes } from "@/db/schema";
 import { getStorageProvider } from "@/lib/storage";
-import pdfParse from "pdf-parse";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -28,7 +27,11 @@ export async function POST(req: NextRequest) {
     // Extract text from PDF
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const pdfData = await pdfParse(buffer);
+    
+    // Dynamically require pdf-parse to prevent build-time evaluation errors
+    const { PDFParse } = await import("pdf-parse");
+    const parser = new PDFParse({ data: buffer });
+    const pdfData = await parser.getText();
     const parsedText = pdfData.text;
 
     // Save metadata to D1
