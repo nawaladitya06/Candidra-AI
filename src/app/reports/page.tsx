@@ -49,28 +49,28 @@ export default function ReportsIndexPage() {
                  value={searchQuery}
                  onChange={(e) => setSearchQuery(e.target.value)}
                  placeholder="Search by role or tech stack..." 
-                 className="w-full bg-white/[0.03] border border-white/10 rounded-xl pl-12 pr-10 py-3 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all placeholder:text-slate-600"
+                 className="w-full bg-black border-4 border-white/20 pl-12 pr-10 py-3 text-sm text-white focus:outline-none focus:border-primary transition-all placeholder:text-slate-600 font-mono brutal-shadow-sm"
                />
                {searchQuery && (
                  <button 
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-white/5 rounded-full text-slate-500"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-white/20 text-slate-500 hover:text-white transition-colors"
                  >
-                    <X className="w-3 h-3" />
+                    <X className="w-4 h-4" />
                  </button>
                )}
             </div>
             
-            <div className="flex bg-white/[0.03] p-1 rounded-xl border border-white/5 w-full sm:w-auto">
+            <div className="flex bg-black p-1 border-4 border-white/20 w-full sm:w-auto brutal-shadow-sm">
                {(["all", "completed", "in-progress"] as const).map((filter) => (
                  <button
                    key={filter}
                    onClick={() => setActiveFilter(filter)}
                    className={cn(
-                     "px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex-1 sm:flex-none",
+                     "px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all flex-1 sm:flex-none border-2 font-mono",
                      activeFilter === filter 
-                       ? "bg-white/10 text-white shadow-lg" 
-                       : "text-slate-500 hover:text-slate-300"
+                       ? "bg-primary text-black border-black brutal-shadow-sm translate-x-[2px] translate-y-[2px]" 
+                       : "bg-black text-white border-transparent hover:border-white/20 hover:bg-white/5"
                    )}
                  >
                    {filter.replace("-", " ")}
@@ -80,30 +80,29 @@ export default function ReportsIndexPage() {
          </div>
          
          <div className="flex items-center gap-4 w-full sm:w-auto">
-            <button className="flex-1 sm:flex-none text-xs font-black uppercase tracking-widest text-slate-400 hover:text-white flex items-center justify-center gap-3 bg-white/5 px-6 py-3 rounded-xl border border-white/5 hover:bg-white/10 transition-all">
+            <button className="flex-1 sm:flex-none text-xs font-black uppercase tracking-widest text-white flex items-center justify-center gap-3 bg-black px-6 py-3 border-4 border-white/20 hover:bg-white hover:text-black transition-colors brutal-shadow-sm font-mono">
                <Download className="w-4 h-4" /> Export All
             </button>
          </div>
       </div>
 
-      {filteredReports.length === 0 ? (
-        <GlassCard className="p-20 flex flex-col items-center justify-center text-center border-white/5 bg-white/[0.01]">
-           <div className="w-20 h-20 rounded-[2rem] bg-white/5 flex items-center justify-center mb-8 relative">
-              <BarChart3 className="w-10 h-10 text-slate-700" />
-              <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
-                 <Search className="w-3 h-3 text-purple-400" />
+        <div className="p-20 flex flex-col items-center justify-center text-center border-4 border-white/20 bg-black brutal-shadow">
+           <div className="w-24 h-24 border-4 border-white bg-primary flex items-center justify-center mb-8 relative brutal-shadow-sm">
+              <BarChart3 className="w-10 h-10 text-black" />
+              <div className="absolute -top-3 -right-3 w-8 h-8 bg-black border-2 border-white flex items-center justify-center brutal-shadow-sm">
+                 <Search className="w-4 h-4 text-white" />
               </div>
            </div>
-           <h3 className="text-2xl font-black text-white mb-3 tracking-tight">No Reports Found</h3>
-           <p className="text-slate-500 mb-10 max-w-sm leading-relaxed">
+           <h3 className="text-3xl font-black text-white mb-4 tracking-tighter uppercase font-mono">No Reports Found</h3>
+           <p className="text-slate-400 mb-10 max-w-sm font-bold font-mono text-sm leading-relaxed">
              {searchQuery || activeFilter !== "all" 
                ? "We couldn't find any sessions matching your current filters. Try adjusting your search criteria."
                : "You haven't completed any interviews yet. Start your first session to see your performance metrics."}
            </p>
-           <Link href="/interview/setup" className="btn-primary py-3.5 px-10 text-xs font-black uppercase tracking-widest shadow-[0_0_30px_rgba(139,92,246,0.2)]">
+           <Link href="/interview/setup" className="btn-primary py-4 px-10 text-xs font-black uppercase tracking-widest font-mono">
              New Interview Session
            </Link>
-        </GlassCard>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
            <AnimatePresence mode="popLayout">
@@ -117,74 +116,74 @@ export default function ReportsIndexPage() {
                   transition={{ delay: i * 0.05 }}
                 >
                   <Link href={`/reports/${interview.id}`}>
-                    <GlassCard hoverable className="p-8 h-full flex flex-col group cursor-pointer border-white/5 hover:border-purple-500/30 bg-white/[0.01] transition-all duration-500">
+                    <div className="p-8 h-full flex flex-col group cursor-pointer border-4 border-white/20 hover:border-primary bg-black brutal-shadow transition-all duration-300 hover:-translate-y-2">
                        <div className="flex justify-between items-start mb-8">
                           <div className="max-w-[70%]">
-                             <div className="flex items-center gap-2 mb-2">
+                             <div className="flex items-center gap-2 mb-4">
                                 <span className={cn(
-                                  "px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest",
-                                  interview.status === "completed" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                                  "px-3 py-1 text-[9px] font-black uppercase tracking-widest font-mono border-2",
+                                  interview.status === "completed" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/50" : "bg-primary/20 text-primary border-primary/50"
                                 )}>
                                    {interview.status}
                                 </span>
                              </div>
-                             <h3 className="text-xl font-black text-white mb-2 group-hover:text-purple-400 transition-colors tracking-tight leading-tight line-clamp-1">{interview.role}</h3>
-                             <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500 flex items-center gap-2">
-                                <Calendar className="w-3 h-3 text-purple-500/50" /> {formatDate(interview.createdAt)}
+                             <h3 className="text-2xl font-black text-white mb-3 group-hover:text-primary transition-colors tracking-tighter uppercase font-mono leading-tight line-clamp-2">{interview.role}</h3>
+                             <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 flex items-center gap-2 font-mono">
+                                <Calendar className="w-4 h-4 text-primary" /> {formatDate(interview.createdAt)}
                              </p>
                           </div>
                           <div 
-                            className="w-14 h-14 rounded-2xl border-2 flex flex-col items-center justify-center shadow-lg bg-black/20" 
-                            style={{ borderColor: `${getScoreColor(interview.score || 0)}20`, color: getScoreColor(interview.score || 0) }}
+                            className="w-16 h-16 border-4 bg-black flex flex-col items-center justify-center brutal-shadow-sm transition-colors group-hover:bg-primary group-hover:border-black" 
+                            style={{ borderColor: getScoreColor(interview.score || 0) }}
                           >
-                             <span className="text-lg font-black leading-none">{interview.score || 0}</span>
-                             <span className="text-[7px] font-black uppercase tracking-widest mt-1 opacity-60">SCORE</span>
+                             <span className="text-xl font-black leading-none group-hover:text-black" style={{ color: getScoreColor(interview.score || 0) }}>{interview.score || 0}</span>
+                             <span className="text-[8px] font-black uppercase tracking-widest mt-1 opacity-80 group-hover:text-black font-mono">SCORE</span>
                           </div>
                        </div>
      
                        <div className="flex flex-wrap gap-2 mb-8">
                           {interview.techStack?.slice(0, 3).map(tech => (
-                             <span key={tech} className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/5 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                             <span key={tech} className="px-3 py-1.5 bg-black border-2 border-white/20 text-[10px] font-black uppercase tracking-widest text-white font-mono brutal-shadow-sm">
                                 {tech}
                              </span>
                           ))}
                           {interview.techStack && interview.techStack.length > 3 && (
-                             <span className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/5 text-[9px] font-black uppercase tracking-widest text-slate-500">
+                             <span className="px-3 py-1.5 bg-black border-2 border-white/20 text-[10px] font-black uppercase tracking-widest text-primary font-mono brutal-shadow-sm">
                                 +{interview.techStack.length - 3}
                              </span>
                           )}
                        </div>
      
                        <div className="grid grid-cols-2 gap-4 mb-8">
-                          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 group-hover:bg-white/[0.04] transition-colors">
-                             <p className="text-[9px] uppercase font-black tracking-widest text-slate-600 mb-1.5 flex items-center gap-2">
-                                <Clock className="w-3 h-3" /> Duration
+                          <div className="p-4 bg-black border-2 border-white/20 transition-colors brutal-shadow-sm">
+                             <p className="text-[10px] uppercase font-black tracking-widest text-primary mb-2 flex items-center gap-2 font-mono">
+                                <Clock className="w-4 h-4" /> Duration
                              </p>
-                             <p className="text-xs font-black text-white">{Math.floor((interview.duration || 1200) / 60)}m { (interview.duration || 1200) % 60}s</p>
+                             <p className="text-sm font-black text-white font-mono">{Math.floor((interview.duration || 1200) / 60)}m { (interview.duration || 1200) % 60}s</p>
                           </div>
-                          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 group-hover:bg-white/[0.04] transition-colors">
-                             <p className="text-[9px] uppercase font-black tracking-widest text-slate-600 mb-1.5 flex items-center gap-2">
-                                <Trophy className="w-3 h-3" /> Experience
+                          <div className="p-4 bg-black border-2 border-white/20 transition-colors brutal-shadow-sm">
+                             <p className="text-[10px] uppercase font-black tracking-widest text-primary mb-2 flex items-center gap-2 font-mono">
+                                <Trophy className="w-4 h-4" /> Experience
                              </p>
-                             <p className="text-xs font-black text-white capitalize">{interview.experienceLevel}</p>
+                             <p className="text-sm font-black text-white font-mono uppercase">{interview.experienceLevel}</p>
                           </div>
                        </div>
      
-                       <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
-                          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-400 group-hover:text-purple-300 transition-colors">Analyze Performance</span>
-                          <div className="flex items-center gap-3">
+                       <div className="mt-auto pt-6 border-t-4 border-white/20 flex items-center justify-between">
+                          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white group-hover:text-primary transition-colors font-mono">Analyze Performance</span>
+                          <div className="flex items-center gap-4">
                              <button 
                               onClick={(e) => handleDelete(e, interview.id)}
-                              className="p-2 rounded-lg hover:bg-red-500/10 text-slate-600 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
+                              className="p-2 border-2 border-transparent hover:border-red-500 text-slate-600 hover:text-red-500 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100 brutal-shadow-sm"
                              >
-                                <Trash2 className="w-4 h-4" />
+                                <Trash2 className="w-5 h-5" />
                              </button>
-                             <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-all">
-                                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                             <div className="w-10 h-10 border-2 border-white/20 bg-black flex items-center justify-center group-hover:bg-primary group-hover:border-black group-hover:text-black text-white transition-all brutal-shadow-sm">
+                                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                              </div>
                           </div>
                        </div>
-                    </GlassCard>
+                    </div>
                   </Link>
                 </motion.div>
               ))}
