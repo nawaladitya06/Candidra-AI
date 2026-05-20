@@ -55,7 +55,7 @@ export default function LoginPage() {
           <div className="flex flex-col items-center text-center mb-10">
             <Link href="/" className="flex items-center gap-3 mb-6">
               <div className="w-14 h-14 border-2 border-white/20 bg-black flex items-center justify-center brutal-shadow-sm overflow-hidden">
-                <img src="/icon.png?v=3" alt="Candidra AI Logo" className="w-full h-full object-cover" />
+                <img src="/icon.png?v=4" alt="Candidra AI Logo" className="w-full h-full object-cover" />
               </div>
             </Link>
             <h1 className="text-3xl font-black text-white uppercase font-mono tracking-tighter mb-2">Welcome Back</h1>

@@ -52,7 +52,7 @@ export function LoadingScreen({ message }: { message?: string }) {
             className="absolute -inset-4 bg-primary text-black rounded-2xl blur-xl opacity-30"
           />
           <div className="w-16 h-16 rounded-2xl bg-black border-2 flex items-center justify-center shadow-lg relative border-white/20 overflow-hidden">
-            <img src="/icon.png?v=3" alt="Candidra AI Logo" className="w-full h-full object-cover animate-pulse" />
+            <img src="/icon.png?v=4" alt="Candidra AI Logo" className="w-full h-full object-cover animate-pulse" />
           </div>
         </div>
 

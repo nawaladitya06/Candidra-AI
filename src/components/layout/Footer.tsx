@@ -45,7 +45,7 @@ export function Footer() {
           <div className="md:col-span-1 space-y-6">
             <Link href="/" className="flex items-center gap-3">
               <div className="w-10 h-10 border-2 border-white/20 bg-black flex items-center justify-center brutal-shadow-sm hover:translate-x-[2px] hover:translate-y-[2px] transition-transform overflow-hidden">
-                <img src="/icon.png?v=3" alt="Candidra AI Logo" className="w-full h-full object-cover" />
+                <img src="/icon.png?v=4" alt="Candidra AI Logo" className="w-full h-full object-cover" />
               </div>
               <span className="text-xl font-black text-white uppercase font-mono tracking-tighter">Candidra AI</span>
             </Link>
