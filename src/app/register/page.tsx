@@ -73,7 +73,7 @@ export default function RegisterPage() {
          {/* Branding Side */}
          <div className="hidden lg:block space-y-8">
             <div className="w-14 h-14 bg-black border-2 border-white/20 flex items-center justify-center brutal-shadow-sm overflow-hidden">
-               <img src="/icon.png?v=4" alt="Candidra AI Logo" className="w-full h-full object-cover" />
+               <img src="/icon.png?v=5" alt="Candidra AI Logo" className="w-full h-full object-cover" />
             </div>
             <h1 className="text-5xl font-black text-white leading-tight uppercase font-mono tracking-tighter">
                Build your future <br />with <span className="text-primary">Candidra AI</span>.
