@@ -4,8 +4,9 @@ import GitHub from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { getDb } from "./db";
-import * as schema from "./db/schema";
 import { users, accounts, sessions } from "./db/schema";
+import { eq } from "drizzle-orm";
+import bcrypt from "bcryptjs";
 
 const db = getDb();
 
@@ -17,14 +18,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     sessionsTable: sessions as any,
   }),
   providers: [
-    Google({
-      clientId: process.env.AUTH_GOOGLE_ID || process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET || process.env.GOOGLE_CLIENT_SECRET,
-    }),
-    GitHub({
-      clientId: process.env.AUTH_GITHUB_ID || process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.AUTH_GITHUB_SECRET || process.env.GITHUB_CLIENT_SECRET,
-    }),
+    Google,
+    GitHub,
     Credentials({
       name: "Credentials",
       credentials: {
@@ -35,18 +30,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!credentials?.email || !credentials?.password) return null;
         const { email, password } = credentials;
 
-        const [user] = await db.select().from(users).where(require("drizzle-orm").eq(users.email, email as string)).limit(1);
+        const [user] = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, email as string))
+          .limit(1);
 
         if (user && user.password) {
-          const bcrypt = require("bcryptjs");
-          const isValid = await bcrypt.compare(password as string, user.password);
+          const isValid = await bcrypt.compare(
+            password as string,
+            user.password
+          );
           if (isValid) {
             return {
               id: user.id,
               name: user.name,
               email: user.email,
               image: user.image,
-              role: "user", // Customize later if needed
+              role: "user",
             };
           }
         }
@@ -61,13 +62,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     jwt({ token, user }) {
       if (user) {
+        token.id = user.id;
         token.role = (user as any).role || "user";
       }
       return token;
     },
     session({ session, token }) {
-      if (session.user && token?.sub) {
-        session.user.id = token.sub;
+      if (session.user) {
+        session.user.id = token.id as string;
         (session.user as any).role = token.role || "user";
       }
       return session;

@@ -15,8 +15,9 @@ export default async function middleware(req: NextRequest) {
   const isOnResume = req.nextUrl.pathname.startsWith("/resume")
   const isOnSettings = req.nextUrl.pathname.startsWith("/settings")
   const isOnReports = req.nextUrl.pathname.startsWith("/reports")
+  const isOnProfile = req.nextUrl.pathname.startsWith("/profile")
 
-  if (isOnDashboard || isOnInterview || isOnCoding || isOnResume || isOnSettings || isOnReports) {
+  if (isOnDashboard || isOnInterview || isOnCoding || isOnResume || isOnSettings || isOnReports || isOnProfile) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL("/login", req.nextUrl))
     }
