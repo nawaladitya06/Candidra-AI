@@ -33,7 +33,7 @@ export function LandingNavbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-10 h-10 border-2 border-white/20 bg-black flex items-center justify-center brutal-shadow-sm group-hover:translate-x-[2px] group-hover:translate-y-[2px] transition-transform overflow-hidden">
-            <img src="/icon.png?v=5" alt="Candidra AI Logo" className="w-full h-full object-cover" />
+            <img src="/icon.png?v=6" alt="Candidra AI Logo" className="w-full h-full object-cover" />
           </div>
           <span className="text-xl font-black text-white tracking-tighter uppercase font-mono hidden md:block">Candidra AI</span>
         </Link>

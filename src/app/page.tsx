@@ -147,8 +147,8 @@ export default function Home() {
             
             <div className="lg:col-span-2">
                <Link href="/" className="flex items-center gap-3 mb-8">
-                  <div className="w-12 h-12 border-2 border-white/20 bg-primary flex items-center justify-center">
-                    <Brain className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 border-2 border-white/20 bg-black flex items-center justify-center overflow-hidden">
+                    <img src="/icon.png?v=6" alt="Candidra AI Logo" className="w-full h-full object-cover" />
                   </div>
                   <span className="text-2xl font-black text-white tracking-tighter font-mono uppercase">Candidra AI</span>
                </Link>
