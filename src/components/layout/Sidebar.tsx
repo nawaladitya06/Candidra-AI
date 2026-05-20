@@ -54,7 +54,7 @@ export function Sidebar() {
         <div className="h-20 flex items-center px-6 border-b-2 border-white/20">
           <Link href="/dashboard" className="flex items-center gap-3 w-full group overflow-hidden">
             <div className="w-10 h-10 flex-shrink-0 border-2 border-white/20 bg-black flex items-center justify-center brutal-shadow-sm overflow-hidden">
-               <img src="/icon.png?v=2" alt="Candidra" className="w-full h-full object-cover" />
+               <img src="/icon.png?v=3" alt="Candidra" className="w-full h-full object-cover" />
             </div>
             <span className="text-xl font-black text-white uppercase font-mono tracking-tighter whitespace-nowrap">
               Candidra
