@@ -53,10 +53,21 @@ const config = {
         },
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: "0px",
+        md: "0px",
+        sm: "0px",
       },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+        display: ['JetBrains Mono', 'monospace'],
+      },
+      boxShadow: {
+        'brutal': '4px 4px 0px 0px rgba(255, 255, 255, 0.15)',
+        'brutal-hover': '2px 2px 0px 0px rgba(255, 255, 255, 0.15)',
+        'brutal-accent': '4px 4px 0px 0px var(--primary)',
+        'brutal-accent-hover': '2px 2px 0px 0px var(--primary)',
+      }
     },
   },
   plugins: [],

@@ -19,8 +19,8 @@ export function GlassCard({ children, className, delay = 0, hoverable = true }: 
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
       className={cn(
-        "glass-card p-6 md:p-8",
-        hoverable && "hover:translate-y-[-4px]",
+        "brutal-card p-6 md:p-8",
+        hoverable && "hover:translate-x-[2px] hover:translate-y-[2px]",
         className
       )}
     >
