@@ -43,23 +43,81 @@ export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export const ROLES = [
-  "Frontend Engineer",
-  "Backend Engineer",
-  "Full Stack Engineer",
-  "Data Scientist",
-  "Machine Learning Engineer",
-  "DevOps Engineer",
-  "Cloud Architect",
-  "Product Manager",
-  "UX Designer",
-  "Mobile Developer",
-  "Blockchain Developer",
-  "Security Engineer",
-  "QA Engineer",
-  "Solutions Architect",
-  "Technical Lead",
-];
+export const ROLES_BY_STREAM: Record<string, string[]> = {
+  "Software Engineering & IT": [
+    "Frontend Engineer",
+    "Backend Engineer",
+    "Full Stack Engineer",
+    "DevOps Engineer",
+    "Cloud Architect",
+    "Mobile Developer (iOS/Android)",
+    "Blockchain Developer",
+    "Security Engineer",
+    "QA Engineer",
+    "Systems Engineer",
+    "Database Administrator",
+    "Site Reliability Engineer (SRE)"
+  ],
+  "Data Science & AI": [
+    "Data Scientist",
+    "Machine Learning Engineer",
+    "AI Research Scientist",
+    "Data Analyst",
+    "Data Engineer",
+    "Business Intelligence (BI) Analyst",
+    "Computer Vision Engineer",
+    "NLP Engineer"
+  ],
+  "Product & Project Management": [
+    "Product Manager",
+    "Project Manager",
+    "Technical Program Manager",
+    "Scrum Master",
+    "Product Owner",
+    "Business Analyst"
+  ],
+  "Design & Creative": [
+    "UX/UI Designer",
+    "Product Designer",
+    "Graphic Designer",
+    "Motion Designer",
+    "Interaction Designer",
+    "Brand Designer"
+  ],
+  "Marketing & Growth": [
+    "Digital Marketing Specialist",
+    "Growth Hacker",
+    "SEO Specialist",
+    "Content Strategist",
+    "Social Media Manager",
+    "Product Marketing Manager",
+    "Brand Manager"
+  ],
+  "Sales & Customer Success": [
+    "Sales Development Representative (SDR)",
+    "Account Executive",
+    "Customer Success Manager (CSM)",
+    "Solutions Engineer",
+    "Technical Account Manager"
+  ],
+  "Finance & Business Operations": [
+    "Financial Analyst",
+    "Investment Banking Analyst",
+    "Business Operations Manager",
+    "Management Consultant",
+    "Data Governance Analyst",
+    "Auditor"
+  ],
+  "Human Resources & Recruiting": [
+    "HR Manager",
+    "Technical Recruiter",
+    "Talent Acquisition Specialist",
+    "HR Operations Specialist",
+    "People Operations Coordinator"
+  ]
+};
+
+export const ROLES = Object.values(ROLES_BY_STREAM).flat();
 
 export const EXPERIENCE_LEVELS = [
   { value: "intern", label: "Intern (0-1 yr)" },

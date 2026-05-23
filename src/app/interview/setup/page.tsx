@@ -4,7 +4,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { useState } from "react";
 import { 
-  ROLES, EXPERIENCE_LEVELS, TECH_STACKS, cn 
+  ROLES, EXPERIENCE_LEVELS, TECH_STACKS, cn, ROLES_BY_STREAM
 } from "@/lib/utils";
 import { 
   Brain, Mic, Briefcase, ChevronRight, 
@@ -115,9 +115,17 @@ export default function InterviewSetupPage() {
               <select 
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="w-full p-4 bg-black border-2 border-white/20 text-white font-mono uppercase text-sm mb-6 focus:border-primary focus:outline-none brutal-shadow-sm transition-all"
+                className="w-full p-4 bg-black border-2 border-white/20 text-white font-mono uppercase text-sm mb-6 focus:border-primary focus:outline-none brutal-shadow-sm transition-all cursor-pointer"
               >
-                {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
+                {Object.entries(ROLES_BY_STREAM).map(([stream, roles]) => (
+                  <optgroup key={stream} label={stream} className="bg-black text-primary font-bold font-mono py-2">
+                    {roles.map(r => (
+                      <option key={r} value={r} className="bg-black text-white font-mono font-bold uppercase">
+                        {r}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
               </select>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">

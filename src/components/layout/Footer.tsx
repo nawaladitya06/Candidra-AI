@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Twitter, Github, Linkedin, Mail, Send, Instagram } from "lucide-react";
+import { Twitter, Github, Linkedin, Mail, Send, Instagram, Phone } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -52,11 +52,16 @@ export function Footer() {
             <p className="text-sm text-slate-400 font-mono leading-relaxed tracking-tight">
               Empowering engineers to master technical interviews through intelligent AI-driven simulations and real-time feedback.
             </p>
-            <div className="flex items-center gap-4">
-              <Link href="https://github.com/nawaladitya06" target="_blank" rel="noopener noreferrer" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm"><Github className="w-4 h-4" /></Link>
-              <Link href="https://www.linkedin.com/in/aditya-nawal" target="_blank" rel="noopener noreferrer" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm"><Linkedin className="w-4 h-4" /></Link>
-              <Link href="https://www.instagram.com/aditya_nawal_07" target="_blank" rel="noopener noreferrer" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm"><Instagram className="w-4 h-4" /></Link>
-              <Link href="mailto:nawaladitya06@gmail.com" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm"><Mail className="w-4 h-4" /></Link>
+            <div className="text-xs text-slate-500 font-mono space-y-1">
+              <div>EMAIL: <a href="mailto:nawaladitya06@gmail.com" className="hover:text-primary transition-colors text-white">nawaladitya06@gmail.com</a></div>
+              <div>PHONE: <a href="tel:+918591336819" className="hover:text-primary transition-colors text-white">+91 85913 36819</a></div>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link href="https://github.com/nawaladitya06" target="_blank" rel="noopener noreferrer" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm" title="GitHub"><Github className="w-4 h-4" /></Link>
+              <Link href="https://www.linkedin.com/in/aditya-nawal" target="_blank" rel="noopener noreferrer" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm" title="LinkedIn"><Linkedin className="w-4 h-4" /></Link>
+              <Link href="https://www.instagram.com/aditya_nawal_07" target="_blank" rel="noopener noreferrer" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm" title="Instagram"><Instagram className="w-4 h-4" /></Link>
+              <Link href="mailto:nawaladitya06@gmail.com" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm" title="Email"><Mail className="w-4 h-4" /></Link>
+              <Link href="tel:+918591336819" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm" title="Phone"><Phone className="w-4 h-4" /></Link>
             </div>
           </div>
 

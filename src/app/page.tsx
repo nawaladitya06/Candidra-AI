@@ -5,7 +5,7 @@ import { Hero } from "@/components/landing/Hero";
 import { Features } from "@/components/landing/Features";
 import { Pricing } from "@/components/landing/Pricing";
 import { motion } from "framer-motion";
-import { Twitter, Github, Linkedin, ArrowRight, Star, Quote } from "lucide-react";
+import { Twitter, Github, Linkedin, ArrowRight, Star, Quote, Mail, Instagram, Phone } from "lucide-react";
 import Link from "next/link";
 import { GlassCard } from "@/components/ui/GlassCard";
 
@@ -152,18 +152,28 @@ export default function Home() {
                   </div>
                   <span className="text-2xl font-black text-white tracking-tighter font-mono uppercase">Candidra AI</span>
                </Link>
-               <p className="text-slate-400 leading-relaxed mb-8 max-w-sm font-mono uppercase text-xs tracking-tight">
+               <p className="text-slate-400 leading-relaxed mb-6 max-w-sm font-mono uppercase text-xs tracking-tight">
                   The world's most advanced AI interview simulator. Built by engineers, for engineers.
                </p>
-               <div className="flex items-center gap-4">
-                  <a href="#" className="w-12 h-12 border-2 border-white/20 bg-black flex items-center justify-center text-white hover:bg-white hover:text-black transition-all">
-                     <Twitter className="w-5 h-5" />
-                  </a>
-                  <a href="#" className="w-12 h-12 border-2 border-white/20 bg-black flex items-center justify-center text-white hover:bg-white hover:text-black transition-all">
+               <div className="text-xs text-slate-500 font-mono mb-6 space-y-1">
+                  <div>EMAIL: <a href="mailto:nawaladitya06@gmail.com" className="hover:text-primary transition-colors text-white">nawaladitya06@gmail.com</a></div>
+                  <div>PHONE: <a href="tel:+918591336819" className="hover:text-primary transition-colors text-white">+91 85913 36819</a></div>
+               </div>
+               <div className="flex flex-wrap items-center gap-3">
+                  <a href="https://github.com/nawaladitya06" target="_blank" rel="noopener noreferrer" className="w-12 h-12 border-2 border-white/20 bg-black flex items-center justify-center text-white hover:bg-white hover:text-black transition-all" title="GitHub">
                      <Github className="w-5 h-5" />
                   </a>
-                  <a href="#" className="w-12 h-12 border-2 border-white/20 bg-black flex items-center justify-center text-white hover:bg-white hover:text-black transition-all">
+                  <a href="https://www.linkedin.com/in/aditya-nawal" target="_blank" rel="noopener noreferrer" className="w-12 h-12 border-2 border-white/20 bg-black flex items-center justify-center text-white hover:bg-white hover:text-black transition-all" title="LinkedIn">
                      <Linkedin className="w-5 h-5" />
+                  </a>
+                  <a href="https://www.instagram.com/aditya_nawal_07" target="_blank" rel="noopener noreferrer" className="w-12 h-12 border-2 border-white/20 bg-black flex items-center justify-center text-white hover:bg-white hover:text-black transition-all" title="Instagram">
+                     <Instagram className="w-5 h-5" />
+                  </a>
+                  <a href="mailto:nawaladitya06@gmail.com" className="w-12 h-12 border-2 border-white/20 bg-black flex items-center justify-center text-white hover:bg-white hover:text-black transition-all" title="Email">
+                     <Mail className="w-5 h-5" />
+                  </a>
+                  <a href="tel:+918591336819" className="w-12 h-12 border-2 border-white/20 bg-black flex items-center justify-center text-white hover:bg-white hover:text-black transition-all" title="Phone">
+                     <Phone className="w-5 h-5" />
                   </a>
                </div>
             </div>
