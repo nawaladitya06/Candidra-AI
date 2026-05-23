@@ -1,3 +1,5 @@
+"use server";
+
 import { generateInterviewQuestions as aiGenerateQuestions, evaluateInterview as aiEvaluateInterview, generateFollowUpQuestionAction } from "./ai-actions";
 import { Feedback, Question } from "./store";
 
