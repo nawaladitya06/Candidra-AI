@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 
 export function Features() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 auto-rows-[300px]">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 md:auto-rows-[300px]">
       
       {/* Feature 1: Large Bento Card (Spans 2 columns) */}
       <div className="md:col-span-2 flex flex-col md:flex-row gap-0 group relative p-0 border-4 border-white/20 bg-black brutal-shadow overflow-hidden transition-transform duration-300 hover:translate-x-[2px] hover:translate-y-[2px]">

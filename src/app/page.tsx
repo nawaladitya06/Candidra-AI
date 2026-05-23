@@ -5,7 +5,7 @@ import { Hero } from "@/components/landing/Hero";
 import { Features } from "@/components/landing/Features";
 import { Pricing } from "@/components/landing/Pricing";
 import { motion } from "framer-motion";
-import { Brain, Twitter, Github, Linkedin, ArrowRight, Star, Quote } from "lucide-react";
+import { Twitter, Github, Linkedin, ArrowRight, Star, Quote } from "lucide-react";
 import Link from "next/link";
 import { GlassCard } from "@/components/ui/GlassCard";
 
@@ -41,7 +41,7 @@ export default function Home() {
         {/* Features Section - Bento Grid */}
         <section id="features" className="section-spacing relative z-10 border-y-2 border-white/20 bg-[#050505]">
            <div className="container-custom">
-              <div className="max-w-3xl mb-24 flex flex-col items-center mx-auto text-center">
+              <div className="max-w-3xl mb-12 md:mb-24 flex flex-col items-center mx-auto text-center">
                  <motion.div
                    initial={{ opacity: 0, y: 10 }}
                    whileInView={{ opacity: 1, y: 0 }}
@@ -51,14 +51,14 @@ export default function Home() {
                    Core Architecture
                  </motion.div>
                  <motion.h2 
-                   initial={{ opacity: 0, y: 20 }}
-                   whileInView={{ opacity: 1, y: 0 }}
-                   viewport={{ once: true }}
-                   className="brutal-heading text-5xl md:text-6xl lg:text-7xl text-white mb-8 leading-[0.9]"
-                 >
-                    Engineered for <br className="hidden md:block" />
-                    <span className="text-primary">Elite Performance.</span>
-                 </motion.h2>
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="brutal-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white mb-8 leading-[0.9]"
+                  >
+                     Engineered for <br className="hidden md:block" />
+                     <span className="text-primary">Elite Performance.</span>
+                  </motion.h2>
                  <motion.p 
                    initial={{ opacity: 0, y: 20 }}
                    whileInView={{ opacity: 1, y: 0 }}
@@ -82,7 +82,7 @@ export default function Home() {
                  <p className="text-xl text-slate-400 font-medium font-mono uppercase tracking-tight">Join top-tier engineers who used Candidra to secure offers.</p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
                  {TESTIMONIALS.map((t, i) => (
                    <GlassCard key={i} delay={i * 0.1} className="p-10 flex flex-col h-full bg-[#111] border-white/20">
                       <div className="flex gap-1.5 mb-8 text-primary">
@@ -113,21 +113,21 @@ export default function Home() {
         </section>
 
         {/* Final CTA */}
-        <section className="py-40 relative overflow-hidden bg-primary border-y-2 border-white/20">
+        <section className="py-20 md:py-40 relative overflow-hidden bg-primary border-y-2 border-white/20">
            <div className="container-custom relative z-10 text-center">
               <motion.div 
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="bg-black p-16 md:p-32 border-4 border-black max-w-6xl mx-auto relative overflow-hidden"
+                className="bg-black p-8 sm:p-16 md:p-32 border-4 border-black max-w-6xl mx-auto relative overflow-hidden"
                 style={{ boxShadow: '16px 16px 0px 0px rgba(0,0,0,1)' }}
               >
-                 <h2 className="brutal-heading text-5xl md:text-8xl text-white mb-8 leading-[0.9] relative z-10">
+                 <h2 className="brutal-heading text-4xl sm:text-5xl md:text-8xl text-white mb-8 leading-[0.9] relative z-10">
                     Invest in your <br />
                     <span className="text-primary">future self.</span>
                  </h2>
-                 <p className="text-xl md:text-2xl text-slate-400 mb-16 max-w-2xl mx-auto font-mono uppercase tracking-tighter relative z-10">
+                 <p className="text-base sm:text-xl md:text-2xl text-slate-400 mb-10 md:mb-16 max-w-2xl mx-auto font-mono uppercase tracking-tighter relative z-10">
                     Stop letting interview anxiety dictate your career trajectory. Start preparing with intelligent feedback today.
                  </p>
                  <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10">
@@ -143,9 +143,9 @@ export default function Home() {
       {/* Brutalist Footer */}
       <footer className="pt-24 pb-12 bg-black relative z-10 overflow-hidden">
         <div className="container-custom relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-16 mb-24">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8 md:gap-16 mb-16 md:mb-24">
             
-            <div className="lg:col-span-2">
+            <div className="sm:col-span-2 lg:col-span-2">
                <Link href="/" className="flex items-center gap-3 mb-8">
                   <div className="w-12 h-12 border-2 border-white/20 bg-black flex items-center justify-center overflow-hidden">
                     <img src="/icon.png?v=6" alt="Candidra AI Logo" className="w-full h-full object-cover" />

@@ -68,7 +68,7 @@ export function Pricing() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="brutal-heading text-5xl md:text-7xl text-white mb-6 leading-[0.9]"
+          className="brutal-heading text-4xl sm:text-5xl md:text-7xl text-white mb-6 leading-[0.9]"
         >
           Simple, honest <br className="hidden md:block" />
           <span className="text-primary brutal-shadow">pricing.</span>
@@ -78,7 +78,7 @@ export function Pricing() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="text-slate-400 font-bold font-mono text-lg md:text-xl max-w-2xl mx-auto uppercase tracking-tight"
+          className="text-slate-400 font-bold font-mono text-base sm:text-lg md:text-xl max-w-2xl mx-auto uppercase tracking-tight"
         >
           No complex tiers. Choose the plan that aligns with your current career trajectory.
         </motion.p>
@@ -89,7 +89,7 @@ export function Pricing() {
           <div 
             key={index} 
             className={cn(
-              "flex flex-col relative transition-transform duration-300 bg-black border-4 brutal-shadow p-10",
+              "flex flex-col relative transition-transform duration-300 bg-black border-4 brutal-shadow p-6 sm:p-10",
               plan.popular 
                 ? 'border-primary lg:scale-105 z-10 shadow-[16px_16px_0px_0px_rgba(59,130,246,1)]' 
                 : 'border-white/20 hover:translate-x-[2px] hover:translate-y-[2px]'

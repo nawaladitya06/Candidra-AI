@@ -7,9 +7,9 @@ import { GlassCard } from "../ui/GlassCard";
 
 export function Hero() {
   return (
-    <section className="relative pt-40 pb-20 lg:pt-52 lg:pb-32 overflow-hidden bg-black border-b-4 border-white/10">
+    <section className="relative pt-28 pb-16 lg:pt-52 lg:pb-32 overflow-hidden bg-black border-b-4 border-white/10">
       <div className="container-custom relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-8">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-8">
           
           {/* Left Column: Copy & CTA */}
           <div className="w-full lg:w-1/2 text-center lg:text-left pt-10">
@@ -27,7 +27,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="brutal-heading text-6xl sm:text-7xl lg:text-[88px] text-white mb-8 leading-[0.9]"
+              className="brutal-heading text-5xl sm:text-6xl lg:text-[88px] text-white mb-6 sm:mb-8 leading-[0.9]"
             >
               Interview <br className="hidden lg:block" />
               <span className="text-primary brutal-shadow">
@@ -39,7 +39,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg md:text-xl text-slate-400 mb-10 leading-relaxed font-medium max-w-xl mx-auto lg:mx-0 font-mono"
+              className="text-base sm:text-lg md:text-xl text-slate-400 mb-8 sm:mb-10 leading-relaxed font-medium max-w-xl mx-auto lg:mx-0 font-mono"
             >
               The most advanced AI simulator for elite engineering roles. Master your communication, perfect your system design, and land the offer.
             </motion.p>
@@ -62,7 +62,7 @@ export function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
-              className="mt-12 flex items-center justify-center lg:justify-start gap-6 opacity-60 grayscale"
+              className="mt-8 sm:mt-12 flex items-center justify-center lg:justify-start gap-4 sm:gap-6 opacity-60 grayscale"
             >
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 font-mono">Used by engineers at</p>
               <div className="flex gap-6 font-bold text-white text-lg font-mono">
@@ -81,7 +81,7 @@ export function Hero() {
             className="w-full lg:w-1/2 relative"
           >
             {/* Main Brutalist Panel */}
-            <div className="relative z-10 w-full aspect-square md:aspect-[4/3] border-4 border-white/20 bg-black shadow-[16px_16px_0px_0px_rgba(255,255,255,0.1)] overflow-hidden flex flex-col p-6">
+            <div className="relative z-10 w-full aspect-[4/3] border-4 border-white/20 bg-black shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)] sm:shadow-[16px_16px_0px_0px_rgba(255,255,255,0.1)] overflow-hidden flex flex-col p-4 sm:p-6">
                
                {/* Mock Top Bar */}
                <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-white/10">
@@ -96,7 +96,7 @@ export function Hero() {
                </div>
 
                {/* Mock Content */}
-               <div className="flex-1 grid grid-cols-2 gap-6">
+               <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   {/* Left Mock Panel */}
                   <div className="flex flex-col gap-6">
                      <div className="flex-1 bg-black border-2 border-white/20 p-5 relative overflow-hidden brutal-shadow">
@@ -139,7 +139,7 @@ export function Hero() {
             <motion.div 
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -top-6 -right-6 lg:-right-12 z-20"
+              className="hidden md:block absolute -top-6 -right-6 lg:-right-12 z-20"
             >
               <div className="p-4 bg-black border-2 border-white/20 shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)] flex items-center gap-4">
                  <div className="w-10 h-10 border-2 border-white/20 bg-green-500/20 flex items-center justify-center">
@@ -155,7 +155,7 @@ export function Hero() {
             <motion.div 
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute -bottom-10 -left-6 lg:-left-12 z-20"
+              className="hidden md:block absolute -bottom-10 -left-6 lg:-left-12 z-20"
             >
               <div className="p-4 bg-black border-2 border-white/20 shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)] flex items-center gap-4">
                  <div className="w-10 h-10 border-2 border-white/20 bg-primary/20 flex items-center justify-center">
