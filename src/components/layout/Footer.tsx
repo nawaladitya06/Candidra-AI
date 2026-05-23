@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Twitter, Github, Linkedin, Mail, Send } from "lucide-react";
+import { Twitter, Github, Linkedin, Mail, Send, Instagram } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -53,9 +53,10 @@ export function Footer() {
               Empowering engineers to master technical interviews through intelligent AI-driven simulations and real-time feedback.
             </p>
             <div className="flex items-center gap-4">
-              <Link href="#" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm"><Twitter className="w-4 h-4" /></Link>
-              <Link href="#" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm"><Github className="w-4 h-4" /></Link>
-              <Link href="#" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm"><Linkedin className="w-4 h-4" /></Link>
+              <Link href="https://github.com/nawaladitya06" target="_blank" rel="noopener noreferrer" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm"><Github className="w-4 h-4" /></Link>
+              <Link href="https://www.linkedin.com/in/aditya-nawal" target="_blank" rel="noopener noreferrer" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm"><Linkedin className="w-4 h-4" /></Link>
+              <Link href="https://www.instagram.com/aditya_nawal_07" target="_blank" rel="noopener noreferrer" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm"><Instagram className="w-4 h-4" /></Link>
+              <Link href="mailto:nawaladitya06@gmail.com" className="p-2 border-2 border-white/20 bg-black text-white hover:bg-primary hover:text-black transition-colors brutal-shadow-sm"><Mail className="w-4 h-4" /></Link>
             </div>
           </div>
 

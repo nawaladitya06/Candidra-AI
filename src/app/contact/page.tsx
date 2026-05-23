@@ -52,19 +52,19 @@ export default function ContactPage() {
                        <div className="w-12 h-12 border-2 border-white/20 bg-black flex items-center justify-center brutal-shadow-sm">
                           <Mail className="w-5 h-5 text-primary" />
                        </div>
-                       hello@candidra.ai
+                       <a href="mailto:nawaladitya06@gmail.com" className="hover:text-primary transition-colors">nawaladitya06@gmail.com</a>
                     </div>
                     <div className="flex items-center gap-4 text-white font-bold font-mono tracking-tight">
                        <div className="w-12 h-12 border-2 border-white/20 bg-black flex items-center justify-center brutal-shadow-sm">
                           <MessageSquare className="w-5 h-5 text-primary" />
                        </div>
-                       Press inquiries: press@candidra.ai
+                       <a href="tel:+918591336819" className="hover:text-primary transition-colors">+91 85913 36819</a>
                     </div>
                     <div className="flex items-center gap-4 text-white font-bold font-mono tracking-tight">
                        <div className="w-12 h-12 border-2 border-white/20 bg-black flex items-center justify-center brutal-shadow-sm">
                           <MapPin className="w-5 h-5 text-primary" />
                        </div>
-                       San Francisco, CA
+                       Mumbai, Maharashtra, India
                     </div>
                  </div>
               </div>
