@@ -1,12 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { getDb } from "@/db";
 import { notifications } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 
-export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) {
+export const GET = auth(async (req) => {
+  if (!req.auth?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -15,7 +14,7 @@ export async function GET(req: NextRequest) {
     const userNotifications = await db
       .select()
       .from(notifications)
-      .where(eq(notifications.userId, session.user.id))
+      .where(eq(notifications.userId, req.auth.user.id))
       .orderBy(desc(notifications.createdAt))
       .limit(20);
 
@@ -24,11 +23,10 @@ export async function GET(req: NextRequest) {
     console.error("Failed to fetch notifications:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
-}
+});
 
-export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) {
+export const POST = auth(async (req) => {
+  if (!req.auth?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -38,11 +36,11 @@ export async function POST(req: NextRequest) {
     await db
       .update(notifications)
       .set({ isRead: true })
-      .where(eq(notifications.userId, session.user.id));
+      .where(eq(notifications.userId, req.auth.user.id));
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Failed to update notifications:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
-}
+});

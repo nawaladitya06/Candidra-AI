@@ -1,17 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { getDb } from "@/db";
 import { resumes } from "@/db/schema";
 import { getStorageProvider } from "@/lib/storage";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) {
+export const POST = auth(async (req) => {
+  if (!req.auth?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const formData = await req.formData();
+  const formData = await req.request.formData();
   const file = formData.get("file") as File;
 
   if (!file) {
@@ -20,7 +19,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const storage = getStorageProvider();
-    const path = `resumes/${session.user.id}`;
+    const path = `resumes/${req.auth.user.id}`;
     
     // Upload file
     const { url, key } = await storage.uploadFile(file, path);
@@ -48,7 +47,7 @@ export async function POST(req: NextRequest) {
     const db = getDb();
     await db.insert(resumes).values({
       id: crypto.randomUUID(),
-      userId: session.user.id,
+      userId: req.auth.user.id,
       fileName: file.name,
       fileKey: key,
       fileUrl: url,
@@ -67,4 +66,4 @@ export async function POST(req: NextRequest) {
     console.error("Upload Error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
-}
+});

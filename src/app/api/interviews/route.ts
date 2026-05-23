@@ -1,12 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { getDb } from "@/db";
 import { interviews } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 
-export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) {
+export const GET = auth(async (req) => {
+  if (!req.auth?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -15,7 +14,7 @@ export async function GET(req: NextRequest) {
     const userInterviews = await db
       .select()
       .from(interviews)
-      .where(eq(interviews.userId, session.user.id))
+      .where(eq(interviews.userId, req.auth.user.id))
       .orderBy(desc(interviews.createdAt));
 
     return NextResponse.json(userInterviews);
@@ -23,4 +22,4 @@ export async function GET(req: NextRequest) {
     console.error("Failed to fetch interviews:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
-}
+});
