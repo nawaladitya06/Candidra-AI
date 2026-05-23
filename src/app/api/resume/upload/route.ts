@@ -29,9 +29,9 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
     
     // Dynamically require pdf-parse to prevent build-time evaluation errors
-    const { PDFParse } = await import("pdf-parse");
-    const parser = new PDFParse({ data: buffer });
-    const pdfData = await parser.getText();
+    const pdfImport = await import("pdf-parse") as any;
+    const pdf = pdfImport.default || pdfImport;
+    const pdfData = await pdf(buffer);
     const parsedText = pdfData.text;
 
     // Save metadata to D1
