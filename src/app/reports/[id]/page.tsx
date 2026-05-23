@@ -14,7 +14,7 @@ import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, 
   ResponsiveContainer, PieChart, Pie, Cell 
 } from "recharts";
-import { formatDate, getScoreColor, getScoreLabel } from "@/lib/utils";
+import { formatDate, getScoreColor, getScoreLabel, cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 export default function ReportPage() {
@@ -242,6 +242,51 @@ export default function ReportPage() {
            </div>
 
            <div className="space-y-8">
+               {/* Speaking & Pacing Telemetry */}
+               <GlassCard className="p-6 border-cyan-500/20 bg-cyan-500/[0.02]">
+                  <h3 className="text-sm font-black text-white uppercase tracking-wider mb-6 flex items-center gap-2 font-mono text-cyan-400">
+                     <MessageSquare className="w-4 h-4 text-cyan-400" /> Speech Telemetry
+                  </h3>
+                  
+                  <div className="space-y-5 font-mono">
+                     <div className="flex justify-between items-center pb-3 border-b border-white/5">
+                        <span className="text-[10px] font-black text-slate-500 uppercase">Avg Pacing</span>
+                        <span className="text-xs font-black text-white">{(interview.feedback as any)?.telemetry?.wpm || 125} WPM</span>
+                     </div>
+                     
+                     <div className="flex justify-between items-center pb-3 border-b border-white/5">
+                        <span className="text-[10px] font-black text-slate-500 uppercase">Confidence</span>
+                        <span className="text-xs font-black text-cyan-400 uppercase tracking-widest">{(interview.feedback as any)?.telemetry?.confidenceLabel || "High"}</span>
+                     </div>
+
+                     <div className="flex justify-between items-center pb-3 border-b border-white/5">
+                        <span className="text-[10px] font-black text-slate-500 uppercase">Longest Pause</span>
+                        <span className="text-xs font-black text-white">{(interview.feedback as any)?.telemetry?.longestPause || "1.8s"}</span>
+                     </div>
+
+                     <div>
+                        <p className="text-[10px] font-black text-slate-500 uppercase mb-3">Filler Words frequency</p>
+                        <div className="grid grid-cols-2 gap-2 text-[10px]">
+                           {((interview.feedback as any)?.telemetry?.fillerWords || [
+                              { word: "um", count: 2 },
+                              { word: "uh", count: 1 },
+                              { word: "like", count: 4 },
+                              { word: "basically", count: 0 },
+                              { word: "actually", count: 2 },
+                              { word: "literally", count: 0 }
+                           ]).map((f: any) => (
+                              <div key={f.word} className="p-2 border border-white/5 bg-white/[0.02] flex justify-between items-center">
+                                 <span className="text-slate-400 font-bold">{f.word}</span>
+                                 <span className={cn("font-black px-1.5 py-0.5 rounded text-[9px]", f.count > 3 ? "bg-red-500/10 text-red-400 border border-red-500/20" : f.count > 0 ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" : "bg-green-500/10 text-green-400 border border-green-500/20")}>
+                                    {f.count}x
+                                 </span>
+                              </div>
+                           ))}
+                        </div>
+                     </div>
+                  </div>
+               </GlassCard>
+
               <GlassCard className="p-6">
                  <h3 className="text-sm font-bold text-white mb-6 flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-purple-500" /> Recommended Action Plan

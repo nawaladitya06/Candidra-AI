@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { useAppStore } from "@/lib/store";
+import { generateCodingHint } from "@/lib/gemini";
 
 interface CodingQuestion {
   title: string;
@@ -149,6 +150,9 @@ export default function CodingPage() {
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [timeLeft, setTimeLeft] = useState(3600); // 1 hour in seconds
   const [isSolved, setIsSolved] = useState(false);
+  const [codingHint, setCodingHint] = useState("");
+  const [isLoadingHint, setIsLoadingHint] = useState(false);
+  const [terminalTab, setTerminalTab] = useState<"console" | "copilot">("console");
   
   const { setCodingPoints, codingPoints } = useAppStore();
 
@@ -327,6 +331,8 @@ export default function CodingPage() {
     
     setCode(getCustomizedTemplate(selectedLang.id, nextQ));
     setActiveTab("problem");
+    setCodingHint(""); // Reset hints
+    setTerminalTab("console");
     
     toast.success(`Loaded Next Challenge: ${nextQ.title}`);
   };
@@ -336,7 +342,27 @@ export default function CodingPage() {
       setCode(getCustomizedTemplate(selectedLang.id, currentQuestion));
       setOutput("");
       setTestResults([]);
+      setCodingHint(""); // Clear copilot hints
       toast("Code reset to template");
+    }
+  };
+
+  const requestCodingHint = async () => {
+    if (!output) {
+      toast.error("Run your code first to analyze execution telemetry.");
+      return;
+    }
+    setIsLoadingHint(true);
+    setTerminalTab("copilot");
+    toast.loading("AI Mentor is analyzing code and stack logs...", { id: "copilotHint" });
+    try {
+      const hint = await generateCodingHint(code, selectedLang.label, output);
+      setCodingHint(hint);
+      toast.success("AI Mentor analysis loaded!", { id: "copilotHint" });
+    } catch (err) {
+      toast.error("Failed to load debugging hint.", { id: "copilotHint" });
+    } finally {
+      setIsLoadingHint(false);
     }
   };
 
@@ -529,17 +555,63 @@ export default function CodingPage() {
                  />
               </div>
 
-              <div className="h-48 border-t-4 border-white/20 bg-black flex flex-col overflow-hidden">
-                 <div className="h-12 px-6 flex items-center justify-between border-b-2 border-white/20 bg-black">
-                    <span className="text-[10px] font-black text-white uppercase tracking-widest flex items-center gap-3 font-mono">
-                       <Terminal className="w-4 h-4 text-primary" /> Output Terminal
-                    </span>
-                    {isRunning && <div className="w-3 h-3 bg-primary animate-pulse border border-black brutal-shadow-sm" />}
-                 </div>
-                 <div className="flex-1 p-6 text-[13px] font-mono text-primary overflow-y-auto custom-scrollbar whitespace-pre font-bold">
-                    {output || "No output yet. Run your code to see results."}
-                 </div>
-              </div>
+               <div className="h-56 border-t-4 border-white/20 bg-black flex flex-col overflow-hidden">
+                  <div className="h-12 px-6 flex items-center justify-between border-b-2 border-white/20 bg-black">
+                     <div className="flex items-center gap-4">
+                        <button
+                          onClick={() => setTerminalTab("console")}
+                          className={cn(
+                            "text-[10px] font-black uppercase tracking-widest px-3 py-1.5 border-b-2 transition-all font-mono",
+                            terminalTab === "console" ? "border-primary text-primary" : "border-transparent text-slate-500 hover:text-white bg-transparent"
+                          )}
+                        >
+                           🖥️ Console Output
+                        </button>
+                        <button
+                          onClick={() => setTerminalTab("copilot")}
+                          className={cn(
+                            "text-[10px] font-black uppercase tracking-widest px-3 py-1.5 border-b-2 transition-all font-mono flex items-center gap-1.5 relative bg-transparent",
+                            terminalTab === "copilot" ? "border-amber-500 text-amber-400" : "border-transparent text-slate-500 hover:text-white"
+                          )}
+                        >
+                           🤖 AI Copilot
+                           {codingHint && terminalTab !== "copilot" && (
+                              <span className="w-2 h-2 rounded-full bg-amber-500 absolute -top-1 -right-1 animate-pulse" />
+                           )}
+                        </button>
+                     </div>
+                     <div className="flex items-center gap-4">
+                        <button
+                          onClick={requestCodingHint}
+                          disabled={isLoadingHint || !output}
+                          className="px-3 py-1 bg-amber-500/10 border border-amber-500/40 text-amber-400 text-[10px] font-black uppercase tracking-widest font-mono hover:bg-amber-500/20 hover:border-amber-500 transition-colors brutal-shadow-sm disabled:opacity-30 disabled:hover:bg-transparent bg-transparent"
+                        >
+                           {isLoadingHint ? "Analyzing..." : "💡 Ask Copilot"}
+                        </button>
+                        {isRunning && <div className="w-2 h-2 bg-primary animate-pulse border border-black brutal-shadow-sm" />}
+                     </div>
+                  </div>
+                  <div className="flex-1 p-6 text-[13px] font-mono overflow-y-auto custom-scrollbar font-bold leading-relaxed">
+                     {terminalTab === "console" ? (
+                        <div className="text-primary whitespace-pre">
+                           {output || "No output yet. Run your code to see results."}
+                        </div>
+                     ) : (
+                        <div className="text-amber-300">
+                           {codingHint ? (
+                              <div className="space-y-2">
+                                 <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest block mb-1">🤖 AI Coding Mentor Review:</span>
+                                 <p className="italic">{codingHint}</p>
+                              </div>
+                           ) : (
+                              <div className="text-center py-6 text-slate-500 text-xs font-mono">
+                                 Stuck on a bug? Click <span className="text-amber-400 font-black">"ASK COPILOT"</span> to analyze your code and get a hint!
+                              </div>
+                           )}
+                        </div>
+                     )}
+                  </div>
+               </div>
 
               <div className="p-6 flex items-center justify-between bg-black border-t-4 border-white/20">
                  <Link href="/interview/setup" className="text-xs font-black text-slate-500 hover:text-primary uppercase tracking-widest transition-all flex items-center gap-2 font-mono">

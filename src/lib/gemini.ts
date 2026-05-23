@@ -1,6 +1,13 @@
 "use server";
 
-import { generateInterviewQuestions as aiGenerateQuestions, evaluateInterview as aiEvaluateInterview, generateFollowUpQuestionAction } from "./ai-actions";
+import { 
+  generateInterviewQuestions as aiGenerateQuestions, 
+  evaluateInterview as aiEvaluateInterview, 
+  generateFollowUpQuestionAction,
+  generateInterviewHintAction,
+  generateCodingHintAction,
+  analyzeResumeAction
+} from "./ai-actions";
 import { Feedback, Question } from "./store";
 
 export async function generateInterviewQuestions(params: {
@@ -37,4 +44,24 @@ export async function generateResumeQuestions(resumeText: string, role: string):
     resumeText,
     count: 6
   });
+}
+
+export async function generateInterviewHint(
+  questionText: string,
+  role: string,
+  answerSoFar: string
+): Promise<string> {
+  return generateInterviewHintAction(questionText, role, answerSoFar);
+}
+
+export async function generateCodingHint(
+  code: string,
+  language: string,
+  error: string
+): Promise<string> {
+  return generateCodingHintAction(code, language, error);
+}
+
+export async function analyzeResume(resumeText: string): Promise<any> {
+  return analyzeResumeAction(resumeText);
 }

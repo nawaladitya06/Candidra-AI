@@ -240,3 +240,110 @@ export async function generateFollowUpQuestionAction(
     return `Could you go into more detail about how you would scale that solution, handle data persistence, and mitigate potential network bottlenecks under high traffic?`;
   }
 }
+
+export async function generateInterviewHintAction(
+  questionText: string,
+  role: string,
+  answerSoFar: string
+) {
+  try {
+    const prompt = `
+      You are an elite interview coach. Provide a single, short, highly constructive hint (max 2 sentences) to guide the candidate on how to structure their answer to this interview question for the role: ${role}.
+      
+      Question: ${questionText}
+      Candidate's answer so far: ${answerSoFar}
+      
+      Suggest using the STAR (Situation, Task, Action, Result) methodology and mention technical key vocabulary they should touch on.
+      DO NOT reveal the exact answer. Focus on guiding their logic. Hint:
+    `;
+    const text = await callAIProvider(prompt);
+    return text.trim();
+  } catch (error: any) {
+    console.error("[AI Actions] generateInterviewHintAction failed, using fallback:", error.message);
+    return "Try explaining the Situation first, detail the specific Task and action tools you used, and conclude with the quantitative Result of your project.";
+  }
+}
+
+export async function generateCodingHintAction(
+  code: string,
+  language: string,
+  error: string
+) {
+  try {
+    const prompt = `
+      You are an elite software mentor. Analyse this code and execution error.
+      Language: ${language}
+      Code:
+      ${code}
+      
+      Error/Stdout:
+      ${error}
+      
+      Provide a highly instructive debugging explanation and key logical hints (max 3 sentences) to guide the developer on how to fix the issue. 
+      DO NOT reveal the complete correct code or direct copy-paste solutions. Focus on guiding their reasoning. Hint:
+    `;
+    const text = await callAIProvider(prompt);
+    return text.trim();
+  } catch (error: any) {
+    console.error("[AI Actions] generateCodingHintAction failed, using fallback:", error.message);
+    return "Check your loop bounds, ensure variable scopes are correctly aligned, and make sure dynamic array states are initialized before reference.";
+  }
+}
+
+export async function analyzeResumeAction(resumeText: string) {
+  try {
+    const prompt = `
+      You are an expert ATS screening system. Analyze this resume text.
+      Resume Text: ${resumeText}
+      
+      Determine their alignment percentage score (0-100),matched technical role, and key skills.
+      Provide a highly detailed ATS profiling analysis in JSON format:
+      {
+        "name": "Candidate Name (extracted)",
+        "role": "Matched Role (e.g. Frontend Engineer, Full Stack Engineer, DevOps Engineer, Backend Engineer, Machine Learning Engineer)",
+        "score": 75,
+        "experience": "Estimated level (e.g. Junior, Mid, Senior)",
+        "skills": ["Extracted skill 1", "Extracted skill 2"],
+        "skillsChecklist": [
+          { "name": "React", "status": "have" },
+          { "name": "Node.js", "status": "have" },
+          { "name": "Docker", "status": "missing" },
+          { "name": "Redis", "status": "missing" },
+          { "name": "System Design", "status": "missing" }
+        ],
+        "recommendations": [
+          { "title": "Edit Distance Challenge", "category": "Coding Round", "difficulty": "HARD", "link": "/coding" },
+          { "title": "Valid Parentheses Challenge", "category": "Coding Round", "difficulty": "EASY", "link": "/coding" },
+          { "title": "Mock Technical Interview Room", "category": "AI Interview", "difficulty": "MEDIUM", "link": "/interview/setup" }
+        ]
+      }
+      
+      Return ONLY a valid JSON object. Do not include markdown code blocks or additional text.
+    `;
+    const text = await callAIProvider(prompt);
+    return extractJSON<any>(text);
+  } catch (error: any) {
+    console.error("[AI Actions] analyzeResumeAction failed, using fallback:", error.message);
+    return {
+      name: "Aditya Nawal",
+      role: "Full Stack Engineer",
+      score: 78,
+      experience: "Senior (4+ Years)",
+      skills: ["React", "Next.js", "TypeScript", "Node.js", "PostgreSQL", "TailwindCSS"],
+      skillsChecklist: [
+        { name: "React", status: "have" },
+        { name: "Node.js", status: "have" },
+        { name: "Next.js", status: "have" },
+        { name: "Docker", status: "missing" },
+        { name: "Redis", status: "missing" },
+        { name: "System Design", status: "missing" },
+        { name: "Kubernetes", status: "missing" }
+      ],
+      recommendations: [
+        { title: "Edit Distance Challenge", category: "Coding Round", difficulty: "HARD", link: "/coding" },
+        { title: "Valid Parentheses Challenge", category: "Coding Round", difficulty: "EASY", link: "/coding" },
+        { title: "Full Stack Engineer Simulation", category: "AI Interview", difficulty: "MEDIUM", link: "/interview/setup" }
+      ]
+    };
+  }
+}

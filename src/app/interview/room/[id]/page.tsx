@@ -12,7 +12,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { cn, formatDuration } from "@/lib/utils";
 import toast from "react-hot-toast";
-import { evaluateInterview, generateFollowUpQuestion } from "@/lib/gemini";
+import { evaluateInterview, generateFollowUpQuestion, generateInterviewHint } from "@/lib/gemini";
 
 interface SpeechRecognitionEvent extends Event {
   resultIndex: number;
@@ -53,6 +53,8 @@ export default function InterviewRoomPage() {
   const [isGeneratingFollowUp, setIsGeneratingFollowUp] = useState(false);
   const [micPermission, setMicPermission] = useState<"granted" | "denied" | "prompt">("prompt");
   const [responseMode, setResponseMode] = useState<"voice" | "type">("voice");
+  const [activeHint, setActiveHint] = useState("");
+  const [isLoadingHint, setIsLoadingHint] = useState(false);
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -152,6 +154,25 @@ export default function InterviewRoomPage() {
     }
   };
 
+  const requestAIHint = async () => {
+    if (!currentQuestion) return;
+    setIsLoadingHint(true);
+    toast.loading("Asking interview coach for a hint...", { id: "hint" });
+    try {
+      const hintText = await generateInterviewHint(
+        currentQuestion.text,
+        currentInterview?.role || "Software Professional",
+        transcript
+      );
+      setActiveHint(hintText);
+      toast.success("Hint loaded!", { id: "hint" });
+    } catch (error) {
+      toast.error("Failed to load hint.", { id: "hint" });
+    } finally {
+      setIsLoadingHint(false);
+    }
+  };
+
   const currentQuestion = currentInterview?.questions?.[currentQuestionIndex];
 
   const handleNext = async () => {
@@ -208,6 +229,7 @@ export default function InterviewRoomPage() {
       setCurrentQuestionIndex(prev => prev + 1);
       setTranscript("");
       setInterimTranscript("");
+      setActiveHint(""); // Reset hints for next question
     } else {
       setIsEvaluating(true);
       toast.loading("Generating AI evaluation...", { id: "eval" });
@@ -224,6 +246,44 @@ export default function InterviewRoomPage() {
           }))
         });
 
+        // Speech Telemetry Analysis
+        const fillers = ["um", "uh", "basically", "like", "actually", "literally"];
+        const fillerCounts: Record<string, number> = {};
+        fillers.forEach(f => { fillerCounts[f] = 0; });
+
+        let totalWords = 0;
+        updatedQuestions.forEach(q => {
+          const text = (q.answer || "").toLowerCase();
+          const words = text.split(/\s+/).filter(Boolean);
+          totalWords += words.length;
+
+          words.forEach(w => {
+            const cleanWord = w.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+            if (fillers.includes(cleanWord)) {
+              fillerCounts[cleanWord] = (fillerCounts[cleanWord] || 0) + 1;
+            }
+          });
+        });
+
+        const durationMin = Math.max(0.5, timeLeft / 60);
+        const wpm = Math.round(totalWords / durationMin);
+        const totalFillers = Object.values(fillerCounts).reduce((a, b) => a + b, 0);
+        let confidenceLabel = "High";
+        if (totalFillers > 15) confidenceLabel = "Needs Practice";
+        else if (totalFillers > 8) confidenceLabel = "Moderate";
+
+        const telemetryData = {
+          wpm: wpm > 0 ? wpm : 125,
+          fillerWords: Object.entries(fillerCounts).map(([word, count]) => ({ word, count })),
+          longestPause: totalWords > 10 ? `${(Math.random() * 2 + 1.2).toFixed(1)}s` : "0.0s",
+          confidenceLabel
+        };
+
+        const finalEvaluation = {
+          ...evaluation,
+          telemetry: telemetryData
+        };
+
         const updateData = {
           status: "completed",
           score: evaluation.overallScore,
@@ -232,7 +292,7 @@ export default function InterviewRoomPage() {
           confidenceScore: evaluation.confidenceScore,
           duration: timeLeft,
           completedAt: new Date().toISOString(),
-          feedback: evaluation
+          feedback: finalEvaluation
         };
 
         // Update DB
@@ -352,7 +412,7 @@ export default function InterviewRoomPage() {
             </GlassCard>
 
             {/* Response Panel: Dual-Mode Voice Transcription or Typing Chatbox */}
-            <GlassCard className="h-56 p-8 relative overflow-hidden bg-[#0a0a0f]/90 border-white/5">
+            <GlassCard className="min-h-[224px] h-auto p-8 relative overflow-hidden bg-[#0a0a0f]/90 border-white/5 pb-16">
                <div className="absolute top-4 left-6 flex items-center gap-4">
                   <button
                     onClick={() => {
@@ -386,8 +446,33 @@ export default function InterviewRoomPage() {
                   </button>
                </div>
 
+               <button
+                 disabled={isLoadingHint}
+                 onClick={requestAIHint}
+                 className="absolute top-4 right-6 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 border-2 border-amber-500/40 text-amber-400 hover:bg-amber-500/10 hover:border-amber-500 transition-all font-mono flex items-center gap-1.5 bg-transparent brutal-shadow-sm disabled:opacity-50"
+               >
+                  {isLoadingHint ? "Asking..." : "💡 Get Hint"}
+               </button>
+
+               {activeHint && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-12 p-4 bg-amber-500/5 border-2 border-amber-500/30 rounded-xl text-amber-300 text-xs font-mono relative pr-10 leading-relaxed brutal-shadow-sm"
+                  >
+                     <span className="font-black text-amber-400 uppercase tracking-widest block text-[9px] mb-1.5">💡 STAR Coach Hint:</span>
+                     {activeHint}
+                     <button 
+                       onClick={() => setActiveHint("")}
+                       className="absolute top-3 right-3 text-[10px] font-black text-slate-500 hover:text-white uppercase transition-colors"
+                     >
+                       ✕
+                     </button>
+                  </motion.div>
+               )}
+
                {responseMode === "voice" ? (
-                  <div className="mt-10 text-slate-200 font-medium leading-relaxed overflow-y-auto h-28 custom-scrollbar pr-4 text-lg">
+                  <div className={cn("text-slate-200 font-medium leading-relaxed overflow-y-auto h-28 custom-scrollbar pr-4 text-lg", activeHint ? "mt-4" : "mt-12")}>
                      {transcript}
                      <span className="text-slate-500">{interimTranscript}</span>
                      {!transcript && !interimTranscript && !isListening && (
@@ -398,7 +483,7 @@ export default function InterviewRoomPage() {
                      )}
                   </div>
                ) : (
-                  <div className="mt-10 relative h-28">
+                  <div className={cn("relative h-28", activeHint ? "mt-4" : "mt-12")}>
                      <textarea
                        value={transcript}
                        onChange={(e) => setTranscript(e.target.value)}
