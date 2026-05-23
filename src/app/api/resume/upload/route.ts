@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { getDb } from "@/db";
 import { resumes } from "@/db/schema";
 import { getStorageProvider } from "@/lib/storage";
+import pdfParse from "pdf-parse";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -24,26 +25,12 @@ export async function POST(req: NextRequest) {
     // Upload file
     const { url, key } = await storage.uploadFile(file, path);
 
-    // Extract text from PDF using Gemini (bypasses Vercel serverless worker issues with pdf-parse)
+    // Extract text from PDF using pdf-parse v1.1.1 (Stable, no worker crashes)
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
-    // Dynamically import the Gemini SDK so it doesn't break if not available
-    const { GoogleGenerativeAI } = await import("@google/generative-ai");
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    
-    const result = await model.generateContent([
-      {
-        inlineData: {
-          data: buffer.toString("base64"),
-          mimeType: "application/pdf"
-        }
-      },
-      "Extract all the text from this resume PDF accurately. Ensure all contact info, skills, and experience are preserved. Output ONLY the raw text without any markdown or conversational filler."
-    ]);
-    
-    const parsedText = result.response.text();
+    const pdfData = await pdfParse(buffer);
+    const parsedText = pdfData.text;
 
     // Save metadata to D1
     const db = getDb();
