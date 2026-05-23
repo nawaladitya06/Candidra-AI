@@ -92,6 +92,7 @@ interface AppState {
   toggleSidebar: () => void;
   logout: () => void;
   setCodingPoints: (points: number) => void;
+  deleteInterview: (id: string) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -133,6 +134,7 @@ export const useAppStore = create<AppState>()(
         set({ user: null, isAuthenticated: false, interviews: [], resumes: [], notifications: [], codingPoints: 0 });
       },
       setCodingPoints: (codingPoints) => set({ codingPoints }),
+      deleteInterview: (id) => set((state) => ({ interviews: state.interviews.filter((i) => i.id !== id) })),
     }),
     { name: "candidra-store" }
   )

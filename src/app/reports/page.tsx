@@ -27,11 +27,20 @@ export default function ReportsIndexPage() {
     }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [interviews, searchQuery, activeFilter]);
 
-  const handleDelete = (e: React.MouseEvent, id: string) => {
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.preventDefault();
     e.stopPropagation();
     if (confirm("Are you sure you want to delete this report? This action cannot be undone.")) {
-      toast.success("Report deleted successfully");
+      try {
+        const res = await fetch(`/api/interviews?id=${id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("Failed to delete report");
+        
+        useAppStore.getState().deleteInterview(id);
+        toast.success("Report deleted successfully");
+      } catch (err) {
+        toast.error("Could not delete report");
+        console.error(err);
+      }
     }
   };
 

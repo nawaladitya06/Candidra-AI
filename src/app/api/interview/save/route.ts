@@ -1,12 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { getDb } from "@/db";
 import { interviews, questions } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) {
+export const POST = auth(async (req) => {
+  if (!req.auth?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -33,7 +32,7 @@ export async function POST(req: NextRequest) {
       // Insert
       await db.insert(interviews).values({
         id: data.id,
-        userId: session.user.id,
+        userId: req.auth.user.id,
         role: data.role,
         experienceLevel: data.experienceLevel,
         techStack: JSON.stringify(data.techStack),
@@ -67,4 +66,4 @@ export async function POST(req: NextRequest) {
     console.error("Interview Save Error:", error);
     return NextResponse.json({ error: "Failed to save interview" }, { status: 500 });
   }
-}
+});

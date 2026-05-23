@@ -36,9 +36,8 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) {
+export const POST = auth(async (req) => {
+  if (!req.auth?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -48,7 +47,7 @@ export async function POST(req: NextRequest) {
     const db = getDb();
     await db.insert(codingSubmissions).values({
       id: crypto.randomUUID(),
-      userId: session.user.id,
+      userId: req.auth.user.id,
       language,
       code,
       status,
@@ -63,4 +62,4 @@ export async function POST(req: NextRequest) {
     console.error("Submission Error:", error);
     return NextResponse.json({ error: "Failed to save submission" }, { status: 500 });
   }
-}
+});

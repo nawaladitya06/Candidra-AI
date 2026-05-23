@@ -10,7 +10,7 @@ export const POST = auth(async (req) => {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const formData = await req.request.formData();
+  const formData = await req.formData();
   const file = formData.get("file") as File;
 
   if (!file) {
