@@ -18,7 +18,7 @@ import { motion } from "framer-motion";
 import { useMemo } from "react";
 
 export default function DashboardPage() {
-  const { user, interviews } = useAppStore();
+  const { user, interviews, codingPoints } = useAppStore();
 
   const stats = useMemo(() => {
     const completed = interviews.filter(i => i.status === "completed");
@@ -113,11 +113,11 @@ export default function DashboardPage() {
           color="cyan"
         />
         <StatCard 
-          label="Confidence Score" 
-          value={`${stats.avgConfidence}/100`} 
-          change={stats.avgConfidence > 80 ? "Elite" : "Good"} 
+          label="Coding Points" 
+          value={`${codingPoints || 0} PTS`} 
+          change={codingPoints > 0 ? `+${codingPoints}` : "Ready"} 
           positive={true}
-          icon={<Zap className="w-5 h-5" />}
+          icon={<Code2 className="w-5 h-5" />}
           color="pink"
         />
       </div>

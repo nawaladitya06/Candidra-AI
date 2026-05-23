@@ -6,7 +6,7 @@ import { useAppStore, Interview, Resume, Notification as AppNotification } from 
 
 export function StoreSync() {
   const { data: session, status } = useSession();
-  const { setUser, setInterviews, setResumes, setNotifications } = useAppStore();
+  const { setUser, setInterviews, setResumes, setNotifications, setCodingPoints } = useAppStore();
 
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
@@ -27,10 +27,11 @@ export function StoreSync() {
 
       const fetchUserData = async () => {
         try {
-          const [interviewsRes, resumesRes, notificationsRes] = await Promise.all([
+          const [interviewsRes, resumesRes, notificationsRes, codingPointsRes] = await Promise.all([
             fetch("/api/interviews"),
             fetch("/api/resumes"),
             fetch("/api/notifications"),
+            fetch("/api/coding/submit"),
           ]);
 
           if (interviewsRes.ok) {
@@ -45,6 +46,10 @@ export function StoreSync() {
             const notifications = (await notificationsRes.json()) as AppNotification[];
             setNotifications(notifications);
           }
+          if (codingPointsRes.ok) {
+            const data = await codingPointsRes.json();
+            setCodingPoints(data.totalPoints || 0);
+          }
         } catch (error) {
           console.error("Failed to sync user data:", error);
         }
@@ -52,7 +57,7 @@ export function StoreSync() {
 
       fetchUserData();
     }
-  }, [session, status, setUser, setInterviews, setResumes, setNotifications]);
+  }, [session, status, setUser, setInterviews, setResumes, setNotifications, setCodingPoints]);
 
   return null;
 }

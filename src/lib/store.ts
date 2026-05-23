@@ -79,6 +79,7 @@ interface AppState {
   notifications: Notification[];
   currentInterview: Interview | null;
   sidebarOpen: boolean;
+  codingPoints: number;
 
   setUser: (user: User | null) => void;
   setAuthenticated: (value: boolean) => void;
@@ -90,6 +91,7 @@ interface AppState {
   setCurrentInterview: (interview: Interview | null) => void;
   toggleSidebar: () => void;
   logout: () => void;
+  setCodingPoints: (points: number) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -102,6 +104,7 @@ export const useAppStore = create<AppState>()(
       notifications: [],
       currentInterview: null,
       sidebarOpen: true,
+      codingPoints: 0,
 
       setUser: (user) => set({ user, isAuthenticated: !!user }),
       setAuthenticated: (value) => set({ isAuthenticated: value }),
@@ -109,26 +112,27 @@ export const useAppStore = create<AppState>()(
       setResumes: (resumes) => set({ resumes }),
       setNotifications: (notifications) => set({ notifications }),
       addInterview: (interview) =>
-        set((state) => ({ interviews: [interview, ...state.interviews] })),
+          set((state) => ({ interviews: [interview, ...state.interviews] })),
       updateInterview: (id, updates) =>
-        set((state) => ({
-          interviews: state.interviews.map((i) =>
-            i.id === id ? { ...i, ...updates } : i
-          ),
-          currentInterview:
-            state.currentInterview?.id === id
-              ? { ...state.currentInterview, ...updates }
-              : state.currentInterview,
-        })),
+          set((state) => ({
+            interviews: state.interviews.map((i) =>
+                i.id === id ? { ...i, ...updates } : i
+            ),
+            currentInterview:
+                state.currentInterview?.id === id
+                    ? { ...state.currentInterview, ...updates }
+                    : state.currentInterview,
+          })),
       setCurrentInterview: (interview) => set({ currentInterview: interview }),
       toggleSidebar: () =>
-        set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+          set((state) => ({ sidebarOpen: !state.sidebarOpen })),
       logout: () => {
         if (typeof document !== "undefined") {
           document.cookie = "candidra-logged-in=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         }
-        set({ user: null, isAuthenticated: false, interviews: [], resumes: [], notifications: [] });
+        set({ user: null, isAuthenticated: false, interviews: [], resumes: [], notifications: [], codingPoints: 0 });
       },
+      setCodingPoints: (codingPoints) => set({ codingPoints }),
     }),
     { name: "candidra-store" }
   )
