@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -82,7 +82,7 @@ const CODING_QUESTIONS_POOL: CodingQuestion[] = [
   {
     title: "Container With Most Water",
     difficulty: "MEDIUM",
-    description: "Given `n` non-negative integers `height` where each represents a point at coordinate `(i, height[i])`. vertical lines are drawn such that the two endpoints of the line `i` is at `(i, height[i])` and `(i, 0)`. Find two lines, which, together with the x-axis forms a container, such that the container contains the most water.",
+    description: "Given `n` non-negative integers `height` where each represents a point at coordinate `(i, height[i])`. Vertical lines are drawn such that the two endpoints of the line `i` is at `(i, height[i])` and `(i, 0)`. Find two lines, which, together with the x-axis forms a container, such that the container contains the most water.",
     examples: [
       { input: "height = [1,8,6,2,5,4,8,3,7]", output: "49" },
       { input: "height = [1,1]", output: "1" }
@@ -91,6 +91,32 @@ const CODING_QUESTIONS_POOL: CodingQuestion[] = [
       "n == height.length",
       "2 <= n <= 10^5",
       "0 <= height[i] <= 10^4"
+    ]
+  },
+  {
+    title: "Merge k Sorted Lists",
+    difficulty: "HARD",
+    description: "You are given an array of `k` linked-lists `lists`, each linked-list is sorted in ascending order. Merge all the linked-lists into one sorted linked-list and return it.",
+    examples: [
+      { input: "lists = [[1,4,5],[1,3,4],[2,6]]", output: "[1,1,2,3,4,4,5,6]" }
+    ],
+    constraints: [
+      "k == lists.length",
+      "0 <= k <= 10^4",
+      "0 <= lists[i].length <= 500"
+    ]
+  },
+  {
+    title: "Edit Distance",
+    difficulty: "HARD",
+    description: "Given two strings `word1` and `word2`, return the minimum number of operations required to convert `word1` to `word2`. You have the following three operations permitted on a word: Insert a character, Delete a character, Replace a character.",
+    examples: [
+      { input: "word1 = 'horse', word2 = 'ros'", output: "3" },
+      { input: "word1 = 'intention', word2 = 'execution'", output: "5" }
+    ],
+    constraints: [
+      "0 <= word1.length, word2.length <= 500",
+      "word1 and word2 consist of lowercase English letters."
     ]
   }
 ];
@@ -105,8 +131,15 @@ type TestResult = {
 
 export default function CodingPage() {
   const [selectedLang, setSelectedLang] = useState(PROGRAMMING_LANGUAGES[0]);
+  const [difficultyFilter, setDifficultyFilter] = useState<"ALL" | "EASY" | "MEDIUM" | "HARD">("ALL");
   const [questionIndex, setQuestionIndex] = useState(0);
+  
   const currentQuestion = CODING_QUESTIONS_POOL[questionIndex];
+
+  const filteredQuestions = useMemo(() => {
+    if (difficultyFilter === "ALL") return CODING_QUESTIONS_POOL;
+    return CODING_QUESTIONS_POOL.filter(q => q.difficulty === difficultyFilter);
+  }, [difficultyFilter]);
   
   const [code, setCode] = useState(selectedLang.template);
   const [isRunning, setIsRunning] = useState(false);
@@ -154,6 +187,18 @@ export default function CodingPage() {
       } else if (langId === "python") {
         return `# Write your Maximum Subarray solution here\ndef solution(nums):\n    max_so_far = nums[0]\n    max_ending_here = nums[0]\n    for i in range(1, len(nums)):\n        max_ending_here = max(nums[i], max_ending_here + nums[i])\n        max_so_far = max(max_so_far, max_ending_here)\n    return max_so_far\n\nprint(solution([-2,1,-3,4,-1,2,1,-5,4]))\n`;
       }
+    } else if (q.title === "Merge k Sorted Lists") {
+      if (langId === "javascript" || langId === "typescript") {
+        return `// Write your Merge k Sorted Lists solution here\nfunction solution(lists) {\n  const flat = lists.flat().sort((a,b) => a - b);\n  return flat;\n}\n\nconsole.log(solution([[1,4,5],[1,3,4],[2,6]]));\n`;
+      } else if (langId === "python") {
+        return `# Write your Merge k Sorted Lists solution here\ndef solution(lists):\n    flat = [val for sublist in lists for val in sublist]\n    flat.sort()\n    return flat\n\nprint(solution([[1,4,5],[1,3,4],[2,6]]))\n`;
+      }
+    } else if (q.title === "Edit Distance") {
+      if (langId === "javascript" || langId === "typescript") {
+        return `// Write your Edit Distance solution here\nfunction solution(word1, word2) {\n  const m = word1.length, n = word2.length;\n  const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));\n  for (let i = 0; i <= m; i++) dp[i][0] = i;\n  for (let j = 0; j <= n; j++) dp[0][j] = j;\n  for (let i = 1; i <= m; i++) {\n    for (let j = 1; j <= n; j++) {\n      if (word1[i-1] === word2[j-1]) dp[i][j] = dp[i-1][j-1];\n      else dp[i][j] = Math.min(dp[i-1][j] + 1, dp[i][j-1] + 1, dp[i-1][j-1] + 1);\n    }\n  }\n  return dp[m][n];\n}\n\nconsole.log(solution("horse", "ros"));\n`;
+      } else if (langId === "python") {
+        return `# Write your Edit Distance solution here\ndef solution(word1, word2):\n    m, n = len(word1), len(word2)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(m + 1): dp[i][0] = i\n    for j in range(n + 1): dp[0][j] = j\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if word1[i-1] == word2[j-1]: dp[i][j] = dp[i-1][j-1]\n            else: dp[i][j] = min(dp[i-1][j] + 1, dp[i][j-1] + 1, dp[i-1][j-1] + 1)\n    return dp[m][n]\n\nprint(solution("horse", "ros"))\n`;
+      }
     }
 
     return lang.template;
@@ -164,6 +209,26 @@ export default function CodingPage() {
     if (lang) {
       setSelectedLang(lang);
       setCode(getCustomizedTemplate(langId, currentQuestion));
+    }
+  };
+
+  const handleDifficultyFilterChange = (filter: "ALL" | "EASY" | "MEDIUM" | "HARD") => {
+    setDifficultyFilter(filter);
+    setIsSolved(false);
+    setOutput("");
+    setTestResults([]);
+    
+    const newPool = filter === "ALL" 
+      ? CODING_QUESTIONS_POOL 
+      : CODING_QUESTIONS_POOL.filter(q => q.difficulty === filter);
+      
+    if (newPool.length > 0) {
+      setQuestionIndex(0);
+      const firstQ = newPool[0];
+      const mainIndex = CODING_QUESTIONS_POOL.findIndex(q => q.title === firstQ.title);
+      setQuestionIndex(mainIndex !== -1 ? mainIndex : 0);
+      setCode(getCustomizedTemplate(selectedLang.id, firstQ));
+      toast.success(`Loaded ${filter} level challenge: ${firstQ.title}`);
     }
   };
 
@@ -223,7 +288,7 @@ export default function CodingPage() {
       const isSuccess = result.stdout && !result.stderr;
       
       // Save submission
-      const res = await fetch("/api/coding/submit", {
+      await fetch("/api/coding/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -238,7 +303,6 @@ export default function CodingPage() {
 
       if (isSuccess) {
         setIsSolved(true);
-        // Hydrate points locally
         setCodingPoints(codingPoints + 100);
         toast.success("Solution submitted successfully! +100 Points", { id: "submit" });
       } else {
@@ -252,13 +316,15 @@ export default function CodingPage() {
   };
 
   const loadNextQuestion = () => {
-    const nextIndex = (questionIndex + 1) % CODING_QUESTIONS_POOL.length;
-    setQuestionIndex(nextIndex);
+    const nextFilteredIndex = (filteredQuestions.indexOf(currentQuestion) + 1) % filteredQuestions.length;
+    const nextQ = filteredQuestions[nextFilteredIndex];
+    const mainIndex = CODING_QUESTIONS_POOL.findIndex(q => q.title === nextQ.title);
+    
+    setQuestionIndex(mainIndex !== -1 ? mainIndex : 0);
     setIsSolved(false);
     setOutput("");
     setTestResults([]);
     
-    const nextQ = CODING_QUESTIONS_POOL[nextIndex];
     setCode(getCustomizedTemplate(selectedLang.id, nextQ));
     setActiveTab("problem");
     
@@ -318,7 +384,9 @@ export default function CodingPage() {
                             <h2 className="text-xl font-bold text-white tracking-tight uppercase font-mono">{currentQuestion.title}</h2>
                             <span className={cn(
                               "text-[10px] font-black uppercase font-mono tracking-widest px-3 py-1 border-2",
-                              currentQuestion.difficulty === "EASY" ? "bg-emerald-500/10 border-emerald-500 text-emerald-400" : "bg-amber-500/10 border-amber-500 text-amber-400"
+                              currentQuestion.difficulty === "EASY" ? "bg-emerald-500/10 border-emerald-500 text-emerald-400" :
+                              currentQuestion.difficulty === "MEDIUM" ? "bg-amber-500/10 border-amber-500 text-amber-400" :
+                              "bg-red-500/10 border-red-500 text-red-400"
                             )}>
                               {currentQuestion.difficulty}
                             </span>
@@ -399,14 +467,31 @@ export default function CodingPage() {
         <div className="flex-1 flex flex-col gap-6 overflow-hidden">
            <div className="flex-1 p-0 overflow-hidden flex flex-col border-4 border-white/20 bg-black brutal-shadow">
               <div className="h-16 border-b-4 border-white/20 flex items-center justify-between px-6 bg-black">
-                 <div className="flex items-center gap-4">
-                    <select 
-                      value={selectedLang.id}
-                      onChange={(e) => handleLangChange(e.target.value)}
-                      className="bg-transparent text-sm font-black text-primary uppercase tracking-widest outline-none cursor-pointer hover:text-white transition-colors font-mono"
-                    >
-                       {PROGRAMMING_LANGUAGES.map(l => <option key={l.id} value={l.id} className="bg-black text-white">{l.label}</option>)}
-                    </select>
+                 <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-2">
+                       <span className="text-[10px] font-black text-slate-500 uppercase font-mono">Lang:</span>
+                       <select 
+                         value={selectedLang.id}
+                         onChange={(e) => handleLangChange(e.target.value)}
+                         className="bg-transparent text-sm font-black text-primary uppercase tracking-widest outline-none cursor-pointer hover:text-white transition-colors font-mono"
+                       >
+                          {PROGRAMMING_LANGUAGES.map(l => <option key={l.id} value={l.id} className="bg-black text-white">{l.label}</option>)}
+                       </select>
+                    </div>
+
+                    <div className="flex items-center gap-2 border-l-2 border-white/20 pl-4">
+                       <span className="text-[10px] font-black text-slate-500 uppercase font-mono">Level:</span>
+                       <select 
+                         value={difficultyFilter}
+                         onChange={(e) => handleDifficultyFilterChange(e.target.value as any)}
+                         className="bg-transparent text-sm font-black text-primary uppercase tracking-widest outline-none cursor-pointer hover:text-white transition-colors font-mono"
+                       >
+                          <option value="ALL" className="bg-black text-white">ALL LEVELS</option>
+                          <option value="EASY" className="bg-black text-white">EASY</option>
+                          <option value="MEDIUM" className="bg-black text-white">MEDIUM</option>
+                          <option value="HARD" className="bg-black text-white">HARD</option>
+                       </select>
+                    </div>
                  </div>
                  <div className="flex items-center gap-4">
                     <button 
