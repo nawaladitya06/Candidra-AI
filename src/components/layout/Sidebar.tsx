@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Mic, Code2, FileText, BarChart3, User, Settings,
-  ChevronLeft, ChevronRight, Star, Shield, Zap, LogOut, Sparkles
+  ChevronLeft, ChevronRight, Star, Shield, Zap, LogOut, Sparkles, Mail
 } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { cn, ROLES_BY_STREAM } from "@/lib/utils";
@@ -62,7 +62,7 @@ export function Sidebar() {
           </Link>
         </div>
 
-        {/* Navigation */}
+         {/* Navigation */}
         <div className="flex-1 py-8 flex flex-col gap-8 overflow-y-auto px-4">
            <div>
               <h4 className="px-2 text-[10px] font-black uppercase tracking-widest text-primary mb-4 whitespace-nowrap font-mono">
@@ -120,6 +120,55 @@ export function Sidebar() {
                  </Link>
               </div>
            </div>
+
+           {user?.email && ["nawaladitya06@gmail.com"].includes(user.email) && (
+             <div>
+                <h4 className="px-2 text-[10px] font-black uppercase tracking-widest text-primary mb-4 whitespace-nowrap font-mono">
+                  Admin
+                </h4>
+                <div className="space-y-2">
+                   <Link href="/admin">
+                      <div className={cn(
+                          "flex items-center gap-3 px-4 py-3 border-2 transition-all font-mono text-xs uppercase tracking-tight",
+                          pathname === "/admin" 
+                            ? "bg-primary text-black border-primary brutal-shadow-sm translate-x-[2px] translate-y-[2px]" 
+                            : "bg-black text-white border-transparent hover:border-white/20 hover:bg-[#111]"
+                        )}>
+                         <LayoutDashboard className="w-4 h-4 flex-shrink-0" />
+                         <span className="font-bold whitespace-nowrap">
+                            Dashboard
+                         </span>
+                      </div>
+                   </Link>
+                   <Link href="/admin/users">
+                      <div className={cn(
+                          "flex items-center gap-3 px-4 py-3 border-2 transition-all font-mono text-xs uppercase tracking-tight",
+                          pathname === "/admin/users" 
+                            ? "bg-primary text-black border-primary brutal-shadow-sm translate-x-[2px] translate-y-[2px]" 
+                            : "bg-black text-white border-transparent hover:border-white/20 hover:bg-[#111]"
+                        )}>
+                         <User className="w-4 h-4 flex-shrink-0" />
+                         <span className="font-bold whitespace-nowrap">
+                            Users
+                         </span>
+                      </div>
+                   </Link>
+                   <Link href="/admin/contacts">
+                      <div className={cn(
+                          "flex items-center gap-3 px-4 py-3 border-2 transition-all font-mono text-xs uppercase tracking-tight",
+                          pathname === "/admin/contacts" 
+                            ? "bg-primary text-black border-primary brutal-shadow-sm translate-x-[2px] translate-y-[2px]" 
+                            : "bg-black text-white border-transparent hover:border-white/20 hover:bg-[#111]"
+                        )}>
+                         <Mail className="w-4 h-4 flex-shrink-0" />
+                         <span className="font-bold whitespace-nowrap">
+                            Contacts
+                         </span>
+                      </div>
+                   </Link>
+                </div>
+             </div>
+           )}
         </div>
 
         {/* Footer / User */}

@@ -114,3 +114,14 @@ export const subscriptions = sqliteTable('subscriptions', {
   currentPeriodEnd: integer('currentPeriodEnd', { mode: 'timestamp' }),
   createdAt: text('createdAt').notNull().$defaultFn(() => new Date().toISOString()),
 });
+
+export const contacts = sqliteTable('contacts', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull(),
+  message: text('message').notNull(),
+  status: text('status').notNull().default('unread'), // 'unread' | 'read' | 'replied'
+  adminReply: text('adminReply'),
+  repliedAt: text('repliedAt'),
+  createdAt: text('createdAt').notNull().$defaultFn(() => new Date().toISOString()),
+});

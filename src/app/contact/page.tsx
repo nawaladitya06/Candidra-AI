@@ -13,12 +13,32 @@ export default function ContactPage() {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate API request
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const formData = new FormData(e.currentTarget);
+    const firstName = formData.get("firstName");
+    const lastName = formData.get("lastName");
+    const email = formData.get("email");
+    const message = formData.get("message");
     
-    toast.success("Message sent successfully! We'll get back to you soon.");
-    setIsLoading(false);
-    (e.target as HTMLFormElement).reset();
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: `${firstName} ${lastName}`.trim(),
+          email,
+          message,
+        }),
+      });
+      
+      if (!res.ok) throw new Error("Failed to send message");
+      
+      toast.success("Message sent successfully! We'll get back to you soon.");
+      (e.target as HTMLFormElement).reset();
+    } catch (err) {
+      toast.error("Could not send message. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -80,20 +100,20 @@ export default function ContactPage() {
                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="space-y-2">
                              <label className="text-[10px] font-black uppercase tracking-widest text-primary font-mono">First Name</label>
-                             <input required type="text" className="w-full bg-black border-2 border-white/20 px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors brutal-shadow-sm font-mono" />
+                             <input name="firstName" required type="text" className="w-full bg-black border-2 border-white/20 px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors brutal-shadow-sm font-mono" />
                           </div>
                           <div className="space-y-2">
                              <label className="text-[10px] font-black uppercase tracking-widest text-primary font-mono">Last Name</label>
-                             <input required type="text" className="w-full bg-black border-2 border-white/20 px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors brutal-shadow-sm font-mono" />
+                             <input name="lastName" required type="text" className="w-full bg-black border-2 border-white/20 px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors brutal-shadow-sm font-mono" />
                           </div>
                        </div>
                        <div className="space-y-2">
                           <label className="text-[10px] font-black uppercase tracking-widest text-primary font-mono">Work Email</label>
-                          <input required type="email" className="w-full bg-black border-2 border-white/20 px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors brutal-shadow-sm font-mono" />
+                          <input name="email" required type="email" className="w-full bg-black border-2 border-white/20 px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors brutal-shadow-sm font-mono" />
                        </div>
                        <div className="space-y-2">
                           <label className="text-[10px] font-black uppercase tracking-widest text-primary font-mono">Message</label>
-                          <textarea required rows={4} className="w-full bg-black border-2 border-white/20 px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors resize-none brutal-shadow-sm font-mono" />
+                          <textarea name="message" required rows={4} className="w-full bg-black border-2 border-white/20 px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors resize-none brutal-shadow-sm font-mono" />
                        </div>
                        <button 
                          type="submit"
@@ -105,6 +125,7 @@ export default function ContactPage() {
                        </button>
                     </form>
                  </div>
+
               </motion.div>
               
            </div>

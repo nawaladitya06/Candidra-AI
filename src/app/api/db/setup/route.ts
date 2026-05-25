@@ -24,6 +24,19 @@ export async function GET() {
       );
     `);
     
+    await db.run(sql`
+      CREATE TABLE IF NOT EXISTS \`contacts\` (
+        \`id\` text PRIMARY KEY NOT NULL,
+        \`name\` text NOT NULL,
+        \`email\` text NOT NULL,
+        \`message\` text NOT NULL,
+        \`status\` text NOT NULL DEFAULT 'unread',
+        \`adminReply\` text,
+        \`repliedAt\` text,
+        \`createdAt\` text NOT NULL
+      );
+    `);
+    
     try {
       await db.run(sql`INSERT INTO \`resumes\` SELECT * FROM \`resumes_old\`;`);
     } catch(e) {}
