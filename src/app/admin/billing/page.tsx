@@ -111,7 +111,10 @@ export default function AdminBillingPage() {
           daysValid
         }),
       });
-      if (!res.ok) throw new Error("Add failed");
+      if (!res.ok) {
+         const errorData = await res.json().catch(() => ({}));
+         throw new Error(errorData.error || "Add failed");
+      }
       toast.success("Subscription added");
       setIsAddModalOpen(false);
       setSelectedUserId("");
