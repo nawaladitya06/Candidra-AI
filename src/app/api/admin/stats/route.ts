@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { getDb } from "@/db";
-import { sql } from "drizzle-orm";
+import { users, interviews, resumes } from "@/db/schema";
+import { count, avg, eq, sql } from "drizzle-orm";
 
 const ADMIN_EMAILS = ["nawaladitya06@gmail.com"];
 
@@ -15,45 +16,36 @@ export async function GET() {
 
     const db = getDb();
 
-    // Total users
-    const usersRes = await db.run(sql`SELECT COUNT(*) as count FROM \`users\``);
-    const totalUsers = (usersRes as any).rows?.[0]?.count ?? 0;
+    // Use Drizzle ORM query builder — avoids raw SQL row format issues
+    const [totalUsersRow]       = await db.select({ value: count() }).from(users);
+    const [totalInterviewsRow]  = await db.select({ value: count() }).from(interviews);
+    const [completedRow]        = await db.select({ value: count() }).from(interviews).where(eq(interviews.status, "completed"));
+    const [totalResumesRow]     = await db.select({ value: count() }).from(resumes);
+    const [freeUsersRow]        = await db.select({ value: count() }).from(users).where(eq(users.plan, "free"));
+    const [proUsersRow]         = await db.select({ value: count() }).from(users).where(eq(users.plan, "pro"));
+    const [avgScoreRow]         = await db.select({ value: avg(interviews.score) }).from(interviews);
 
-    // Total interviews
-    const interviewsRes = await db.run(sql`SELECT COUNT(*) as count FROM \`interviews\``);
-    const totalInterviews = (interviewsRes as any).rows?.[0]?.count ?? 0;
-
-    // Completed interviews
-    const completedRes = await db.run(sql`SELECT COUNT(*) as count FROM \`interviews\` WHERE \`status\` = 'completed'`);
-    const completedInterviews = (completedRes as any).rows?.[0]?.count ?? 0;
-
-    // Total resumes uploaded
-    const resumesRes = await db.run(sql`SELECT COUNT(*) as count FROM \`resumes\``);
-    const totalResumes = (resumesRes as any).rows?.[0]?.count ?? 0;
-
-    // Users by plan
-    const freeUsersRes = await db.run(sql`SELECT COUNT(*) as count FROM \`users\` WHERE \`plan\` = 'free'`);
-    const proUsersRes = await db.run(sql`SELECT COUNT(*) as count FROM \`users\` WHERE \`plan\` = 'pro'`);
-    const freeUsers = (freeUsersRes as any).rows?.[0]?.count ?? 0;
-    const proUsers = (proUsersRes as any).rows?.[0]?.count ?? 0;
-
-    // Recent users (last 5)
-    const recentUsersRes = await db.run(sql`SELECT \`id\`, \`name\`, \`email\`, \`plan\`, \`interviewsCompleted\` FROM \`users\` ORDER BY \`createdAt\` DESC LIMIT 5`);
-    const recentUsers = (recentUsersRes as any).rows ?? [];
-
-    // Average interview score
-    const avgScoreRes = await db.run(sql`SELECT AVG(\`score\`) as avg FROM \`interviews\` WHERE \`score\` IS NOT NULL`);
-    const avgScore = Math.round((avgScoreRes as any).rows?.[0]?.avg ?? 0);
+    const recentUsers = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        plan: users.plan,
+        interviewsCompleted: users.interviewsCompleted,
+      })
+      .from(users)
+      .orderBy(sql`rowid DESC`)
+      .limit(5);
 
     return NextResponse.json({
-      totalUsers,
-      totalInterviews,
-      completedInterviews,
-      totalResumes,
-      freeUsers,
-      proUsers,
+      totalUsers:          totalUsersRow?.value      ?? 0,
+      totalInterviews:     totalInterviewsRow?.value ?? 0,
+      completedInterviews: completedRow?.value       ?? 0,
+      totalResumes:        totalResumesRow?.value     ?? 0,
+      freeUsers:           freeUsersRow?.value        ?? 0,
+      proUsers:            proUsersRow?.value         ?? 0,
+      avgScore:            Math.round(Number(avgScoreRow?.value ?? 0)),
       recentUsers,
-      avgScore,
     });
   } catch (error: any) {
     console.error("Admin Stats Error:", error);
