@@ -3,7 +3,7 @@ export async function extractTextFromPDF(file: File): Promise<string> {
   const pdfjsLib = await import('pdfjs-dist');
   
   if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://unpkg.com/pdfjs-dist@5.7.284/build/pdf.worker.min.mjs";
   }
 
   const arrayBuffer = await file.arrayBuffer();
