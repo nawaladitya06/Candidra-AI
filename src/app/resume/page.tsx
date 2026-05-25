@@ -95,9 +95,9 @@ export default function ResumePage() {
       setAnalysis(resumeAnalysis);
       setQuestions(genQuestions as any);
       toast.success("AI ATS Screening Analysis Complete!");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error("Analysis failed. Please try again.");
+      toast.error(err.message || "Analysis failed. Please try again.");
     } finally {
       setIsUploading(false);
     }
