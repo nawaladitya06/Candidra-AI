@@ -19,8 +19,9 @@ export default function ReportsIndexPage() {
   const [activeFilter, setActiveFilter] = useState<"all" | "completed" | "in-progress">("all");
 
   const filteredReports = useMemo(() => {
-    return interviews.filter(i => {
-      const matchesSearch = i.role.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    return (interviews || []).filter(i => {
+      const roleStr = i.role || "Unknown Role";
+      const matchesSearch = roleStr.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           (i.techStack && i.techStack.some(t => t.toLowerCase().includes(searchQuery.toLowerCase())));
       const matchesFilter = activeFilter === "all" || i.status === activeFilter;
       return matchesSearch && matchesFilter;
