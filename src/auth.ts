@@ -12,11 +12,11 @@ const db = getDb();
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
-  adapter: DrizzleAdapter(db, {
-    usersTable: users as any,
-    accountsTable: accounts as any,
-    sessionsTable: sessions as any,
-  }),
+  // adapter: DrizzleAdapter(db, {
+  //   usersTable: users as any,
+  //   accountsTable: accounts as any,
+  //   sessionsTable: sessions as any,
+  // }),
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID as string,
@@ -76,13 +76,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return token;
     },
-    session({ session, token }) {
-      if (session.user && token) {
-        session.user.id = (token.id || token.sub) as string;
-        session.user.email = token.email as string;
-        session.user.name = token.name as string;
-        session.user.image = token.picture as string;
-        (session.user as any).role = token.role || "user";
+    session({ session, token, user }) {
+      if (session.user) {
+        if (token) {
+          session.user.id = (token.id || token.sub) as string;
+          session.user.email = (token.email) as string;
+          session.user.name = (token.name) as string;
+          session.user.image = (token.picture || token.image) as string;
+          (session.user as any).role = token.role || "user";
+        } else if (user) {
+          session.user.id = user.id;
+          session.user.email = user.email;
+          session.user.name = user.name;
+          session.user.image = user.image;
+          (session.user as any).role = (user as any).role || "user";
+        }
+        
+        // Final fallback if NextAuth strips everything
+        if (!session.user.id) {
+          session.user.id = "unknown_id_fallback";
+        }
       }
       return session;
     },
