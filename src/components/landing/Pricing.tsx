@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, Zap, Star, Shield, ArrowRight } from "lucide-react";
-import { GlassCard } from "../ui/GlassCard";
+import { Check, Zap, Star, Shield, ArrowRight, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import Script from "next/script";
 
 const PLANS = [
   {
@@ -22,7 +25,7 @@ const PLANS = [
   },
   {
     name: "Professional",
-    price: "$24",
+    price: "₹2400",
     description: "Engineered for active career growth and job seekers.",
     icon: <Zap className="w-6 h-6" />,
     features: [
@@ -53,8 +56,87 @@ const PLANS = [
 ];
 
 export function Pricing() {
+  const router = useRouter();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handleCheckout = async () => {
+    setLoadingPlan("Professional");
+    try {
+      // 1. Create order
+      const res = await fetch("/api/razorpay/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: 240000, currency: "INR" }) // ₹2400.00
+      });
+
+      const data = await res.json();
+      
+      if (!res.ok) {
+         if (res.status === 401) {
+            toast.error("Please login first to upgrade.");
+            router.push("/login");
+            return;
+         }
+         throw new Error(data.error || "Failed to create order");
+      }
+
+      // 2. Open Razorpay modal
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
+        amount: data.amount,
+        currency: data.currency,
+        name: "Candidra AI",
+        description: "Professional Plan Upgrade",
+        order_id: data.order_id,
+        handler: async function (response: any) {
+          const verifyRes = await fetch("/api/razorpay/verify-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature
+            })
+          });
+          const verifyData = await verifyRes.json();
+          if (verifyRes.ok) {
+             toast.success("Payment successful! You are now on the Professional plan.");
+             router.push("/dashboard");
+          } else {
+             toast.error(verifyData.error || "Payment verification failed.");
+          }
+        },
+        theme: {
+          color: "#3b82f6"
+        }
+      };
+      
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function (response: any){
+         toast.error(response.error.description || "Payment failed");
+      });
+      rzp.open();
+
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
+  const onPlanClick = (planName: string) => {
+    if (planName === "Professional") {
+      handleCheckout();
+    } else if (planName === "Foundation") {
+      router.push("/register");
+    } else {
+      router.push("/contact");
+    }
+  };
+
   return (
     <div className="relative">
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <div className="text-center mb-24">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -130,14 +212,23 @@ export function Pricing() {
               ))}
             </div>
 
-            <button className={cn(
+            <button 
+              onClick={() => onPlanClick(plan.name)}
+              disabled={loadingPlan === plan.name}
+              className={cn(
               "w-full py-5 font-black text-sm uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 group border-2 font-mono",
               plan.popular 
               ? 'bg-primary text-black border-black hover:bg-white' 
               : 'bg-black text-white hover:bg-white hover:text-black border-white/20'
             )}>
-              {plan.cta}
-              {plan.popular && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
+              {loadingPlan === plan.name ? (
+                 <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                 <>
+                   {plan.cta}
+                   {plan.popular && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
+                 </>
+              )}
             </button>
           </div>
         ))}
