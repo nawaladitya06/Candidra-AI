@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Mic, Code2, FileText, BarChart3, User, Settings,
-  ChevronLeft, ChevronRight, Star, Shield, Zap, LogOut, Sparkles, Mail
+  ChevronLeft, ChevronRight, Star, Shield, Zap, LogOut, Sparkles, Mail, CreditCard
 } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { cn, ROLES_BY_STREAM } from "@/lib/utils";
@@ -163,6 +163,19 @@ export function Sidebar() {
                          <Mail className="w-4 h-4 flex-shrink-0" />
                          <span className="font-bold whitespace-nowrap">
                             Contacts
+                         </span>
+                      </div>
+                   </Link>
+                   <Link href="/admin/billing">
+                      <div className={cn(
+                          "flex items-center gap-3 px-4 py-3 border-2 transition-all font-mono text-xs uppercase tracking-tight",
+                          pathname === "/admin/billing" 
+                            ? "bg-primary text-black border-primary brutal-shadow-sm translate-x-[2px] translate-y-[2px]" 
+                            : "bg-black text-white border-transparent hover:border-white/20 hover:bg-[#111]"
+                        )}>
+                         <CreditCard className="w-4 h-4 flex-shrink-0" />
+                         <span className="font-bold whitespace-nowrap">
+                            Billing
                          </span>
                       </div>
                    </Link>

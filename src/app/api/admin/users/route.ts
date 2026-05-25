@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { getDb } from "@/db";
-import { users } from "@/db/schema";
+import { users, subscriptions } from "@/db/schema";
+import crypto from "crypto";
 import { eq, sql } from "drizzle-orm";
 
 const ADMIN_EMAILS = ["nawaladitya06@gmail.com"];
@@ -47,6 +48,21 @@ export async function PUT(req: Request) {
         plan: plan !== undefined ? plan : undefined,
       })
       .where(eq(users.id, id));
+      
+    if (plan !== undefined) {
+      const existingSub = await db.select().from(subscriptions).where(eq(subscriptions.userId, id)).limit(1);
+      if (existingSub.length > 0) {
+        await db.update(subscriptions).set({ plan, status: 'active' }).where(eq(subscriptions.userId, id));
+      } else {
+        await db.insert(subscriptions).values({
+          id: crypto.randomUUID(),
+          userId: id,
+          plan,
+          status: 'active',
+          createdAt: new Date().toISOString()
+        });
+      }
+    }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

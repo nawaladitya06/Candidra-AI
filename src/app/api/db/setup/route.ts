@@ -36,6 +36,19 @@ export async function GET() {
         \`createdAt\` text NOT NULL
       );
     `);
+
+    await db.run(sql`
+      CREATE TABLE IF NOT EXISTS \`subscriptions\` (
+        \`id\` text PRIMARY KEY NOT NULL,
+        \`userId\` text NOT NULL,
+        \`stripeCustomerId\` text,
+        \`stripeSubscriptionId\` text,
+        \`plan\` text NOT NULL,
+        \`status\` text NOT NULL,
+        \`currentPeriodEnd\` integer,
+        \`createdAt\` text NOT NULL
+      );
+    `);
     
     try {
       await db.run(sql`INSERT INTO \`resumes\` SELECT * FROM \`resumes_old\`;`);
