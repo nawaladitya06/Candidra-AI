@@ -66,6 +66,34 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
+    async signIn({ user }) {
+      // Auto-upsert user in DB on every sign-in (adapter is disabled, so we do this manually)
+      try {
+        if (user?.email) {
+          const [existing] = await db
+            .select({ id: users.id })
+            .from(users)
+            .where(eq(users.email, user.email))
+            .limit(1);
+
+          if (!existing) {
+            await db.insert(users).values({
+              id: user.id || crypto.randomUUID(),
+              name: user.name || null,
+              email: user.email,
+              image: user.image || null,
+              plan: "free",
+              interviewsCompleted: 0,
+              codingRuns: 0,
+            });
+          }
+        }
+      } catch (e) {
+        console.error("signIn auto-create error:", e);
+        // Never block sign-in even if DB write fails
+      }
+      return true;
+    },
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -91,8 +119,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           session.user.image = user.image;
           (session.user as any).role = (user as any).role || "user";
         }
-        
-        // Final fallback if NextAuth strips everything
         if (!session.user.id) {
           session.user.id = "unknown_id_fallback";
         }
