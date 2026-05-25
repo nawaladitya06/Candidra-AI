@@ -22,7 +22,7 @@ export default function ReportsIndexPage() {
     return (interviews || []).filter(i => {
       const roleStr = i.role || "Unknown Role";
       const matchesSearch = roleStr.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          (i.techStack && i.techStack.some(t => (t || "").toLowerCase().includes(searchQuery.toLowerCase())));
+                          (Array.isArray(i.techStack) && i.techStack.some(t => (t || "").toLowerCase().includes(searchQuery.toLowerCase())));
       const matchesFilter = activeFilter === "all" || i.status === activeFilter;
       return matchesSearch && matchesFilter;
     }).sort((a, b) => new Date(b.createdAt || Date.now()).getTime() - new Date(a.createdAt || Date.now()).getTime());
@@ -153,12 +153,12 @@ export default function ReportsIndexPage() {
                        </div>
      
                        <div className="flex flex-wrap gap-2 mb-8">
-                          {interview.techStack?.slice(0, 3).map((tech, idx) => (
+                          {Array.isArray(interview.techStack) && interview.techStack.slice(0, 3).map((tech, idx) => (
                              <span key={tech || idx} className="px-3 py-1.5 bg-black border-2 border-white/20 text-[10px] font-black uppercase tracking-widest text-white font-mono brutal-shadow-sm">
                                 {tech || "Unknown"}
                              </span>
                           ))}
-                          {interview.techStack && interview.techStack.length > 3 && (
+                          {Array.isArray(interview.techStack) && interview.techStack.length > 3 && (
                              <span className="px-3 py-1.5 bg-black border-2 border-white/20 text-[10px] font-black uppercase tracking-widest text-primary font-mono brutal-shadow-sm">
                                 +{interview.techStack.length - 3}
                              </span>
