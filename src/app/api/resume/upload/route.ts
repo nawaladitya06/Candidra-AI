@@ -55,7 +55,14 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: any) {
     console.error("Upload Error:", error);
-    const msg = error?.message || (typeof error === 'string' ? error : JSON.stringify(error));
-    return NextResponse.json({ error: `Upload Error Details: ${msg}` }, { status: 500 });
+    let msg = error?.message || (typeof error === 'string' ? error : JSON.stringify(error));
+    
+    // If the error message is a Drizzle failed query, it might include the giant parsedText.
+    // We need to truncate it so the actual error reason is visible.
+    if (msg.length > 500) {
+      msg = msg.substring(0, 150) + "... [truncated] ..." + msg.substring(msg.length - 150);
+    }
+    
+    return NextResponse.json({ error: `Upload Error: ${msg}`, sessionDebug: session }, { status: 500 });
   }
 }
