@@ -84,5 +84,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/login",
   },
-  secret: process.env.AUTH_SECRET,
+  secret: process.env.AUTH_SECRET || "candidra_ai_temporary_secret_key_12345!@#",
 });
