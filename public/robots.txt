@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /dashboard/
-Disallow: /interview/room/
-Disallow: /api/
-
-Sitemap: https://candidra.ai/sitemap.xml

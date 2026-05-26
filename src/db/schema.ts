@@ -125,3 +125,15 @@ export const contacts = sqliteTable('contacts', {
   repliedAt: text('repliedAt'),
   createdAt: text('createdAt').notNull().$defaultFn(() => new Date().toISOString()),
 });
+
+export const blogs = sqliteTable('blogs', {
+  id: text('id').primaryKey(),
+  title: text('title').notNull(),
+  slug: text('slug').notNull().unique(),
+  category: text('category').notNull(),
+  content: text('content').notNull(),
+  readTime: text('readTime').notNull(),
+  date: text('date').notNull(),
+  createdAt: text('createdAt').notNull().$defaultFn(() => new Date().toISOString()),
+});
+

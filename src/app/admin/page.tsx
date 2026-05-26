@@ -61,6 +61,7 @@ const QUICK_LINKS = [
   { label: "Users",    href: "/admin/users",    icon: Users,      color: "border-blue-500/40 hover:border-blue-500 text-blue-400",   bg: "bg-blue-500/5 hover:bg-blue-500/10"    },
   { label: "Billing",  href: "/admin/billing",  icon: CreditCard, color: "border-primary/40 hover:border-primary text-primary",       bg: "bg-primary/5 hover:bg-primary/10"      },
   { label: "Contacts", href: "/admin/contacts", icon: Mail,       color: "border-purple-500/40 hover:border-purple-500 text-purple-400", bg: "bg-purple-500/5 hover:bg-purple-500/10" },
+  { label: "Blogs",    href: "/admin/blogs",    icon: FileText,   color: "border-emerald-500/40 hover:border-emerald-500 text-emerald-400", bg: "bg-emerald-500/5 hover:bg-emerald-500/10" },
 ];
 
 // ─── Sub-components ─────────────────────────────────────────────────────────

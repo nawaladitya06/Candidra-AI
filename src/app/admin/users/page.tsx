@@ -67,6 +67,7 @@ export default function AdminUsersPage() {
   const [search, setSearch] = useState("");
   const [planFilter, setPlanFilter] = useState<Plan>("all");
   const [editingUser, setEditingUser] = useState<any>(null);
+  const [creatingUser, setCreatingUser] = useState<any>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
 
@@ -134,6 +135,27 @@ export default function AdminUsersPage() {
     }
   };
 
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(creatingUser),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create user");
+      toast.success("User created successfully!");
+      setUsers(u => [data.user, ...u]);
+      setCreatingUser(null);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create user");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const filteredUsers = useMemo(() => {
     return users.filter(u => {
       const matchesPlan = planFilter === "all" || u.plan === planFilter;
@@ -178,14 +200,22 @@ export default function AdminUsersPage() {
               {users.length} registered accounts · Admin access only
             </p>
           </div>
-          <button
-            onClick={fetchUsers}
-            disabled={loading}
-            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border-2 border-white/20 hover:border-primary/50 px-4 py-2 uppercase tracking-widest text-xs font-bold transition-all disabled:opacity-40"
-          >
-            <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
-            Refresh
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setCreatingUser({ name: "", email: "", password: "", plan: "free" })}
+              className="flex items-center gap-2 bg-primary hover:bg-white text-black hover:text-black border-2 border-primary hover:border-black px-4 py-2 uppercase tracking-widest text-xs font-black transition-all"
+            >
+              Add User
+            </button>
+            <button
+              onClick={fetchUsers}
+              disabled={loading}
+              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border-2 border-white/20 hover:border-primary/50 px-4 py-2 uppercase tracking-widest text-xs font-bold transition-all disabled:opacity-40"
+            >
+              <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
+              Refresh
+            </button>
+          </div>
         </div>
 
         {/* ── Summary Cards ───────────────────────────────────────────────────── */}
@@ -414,6 +444,100 @@ export default function AdminUsersPage() {
                   >
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                     Save Changes
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Create Modal ───────────────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {creatingUser && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm"
+            onClick={e => { if (e.target === e.currentTarget) setCreatingUser(null); }}
+          >
+            <motion.div
+              initial={{ scale: 0.92, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.92, y: 20 }}
+              className="bg-black border-4 border-primary p-8 max-w-md w-full"
+              style={{ boxShadow: "8px 8px 0 0 rgba(59,130,246,0.15)" }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <ShieldAlert className="w-7 h-7 text-primary" />
+                <h2 className="text-2xl font-black uppercase tracking-tighter">Add User</h2>
+              </div>
+
+              <form onSubmit={handleCreate} className="space-y-5">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-primary">Display Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={creatingUser.name || ""}
+                    onChange={e => setCreatingUser({ ...creatingUser, name: e.target.value })}
+                    className="w-full bg-black border-2 border-white/20 p-3 text-white text-sm focus:outline-none focus:border-primary transition-colors font-mono"
+                    placeholder="John Doe"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-primary">Email Address</label>
+                  <input
+                    type="email"
+                    required
+                    value={creatingUser.email || ""}
+                    onChange={e => setCreatingUser({ ...creatingUser, email: e.target.value })}
+                    className="w-full bg-black border-2 border-white/20 p-3 text-white text-sm focus:outline-none focus:border-primary transition-colors font-mono"
+                    placeholder="john@example.com"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-primary">Password</label>
+                  <input
+                    type="password"
+                    required
+                    value={creatingUser.password || ""}
+                    onChange={e => setCreatingUser({ ...creatingUser, password: e.target.value })}
+                    className="w-full bg-black border-2 border-white/20 p-3 text-white text-sm focus:outline-none focus:border-primary transition-colors font-mono"
+                    placeholder="••••••••"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-primary">Plan</label>
+                  <div className="relative">
+                    <select
+                      value={creatingUser.plan || "free"}
+                      onChange={e => setCreatingUser({ ...creatingUser, plan: e.target.value })}
+                      className="w-full bg-black border-2 border-white/20 p-3 text-white text-sm focus:outline-none focus:border-primary transition-colors appearance-none font-mono pr-10"
+                    >
+                      <option value="free">Free</option>
+                      <option value="pro">Pro</option>
+                      <option value="enterprise">Enterprise</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setCreatingUser(null)}
+                    className="flex-1 py-3 border-2 border-white/20 hover:bg-white/10 font-bold uppercase tracking-widest text-sm transition-colors font-mono"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="flex-1 py-3 border-2 border-primary bg-primary text-black font-black uppercase tracking-widest text-sm hover:bg-white transition-colors font-mono flex items-center justify-center gap-2 disabled:opacity-60"
+                  >
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                    Create User
                   </button>
                 </div>
               </form>

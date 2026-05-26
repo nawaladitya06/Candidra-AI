@@ -1,62 +1,67 @@
-"use client";
+import { getDb } from "@/db";
+import { blogs as blogsSchema } from "@/db/schema";
+import { sql } from "drizzle-orm";
+import BlogClient from "./BlogClient";
+import { Metadata } from "next";
 
-import { LandingNavbar } from "@/components/landing/LandingNavbar";
-import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+export const metadata: Metadata = {
+  title: "Candidra Journal — Technical, Coding, & Interview Preparation Guides",
+  description: "Explore expert insights, low-latency LLM architectures, system design anti-patterns, and data-driven guides to landing your dream software engineering job.",
+  keywords: ["Candidra blog", "system design guides", "coding interview prep", "LLM latency engineering", "tech career blog"],
+};
 
-const POSTS = [
-  { category: "Engineering", title: "How we built a real-time LLM pipeline with under 200ms latency", date: "May 10, 2026", readTime: "8 min read" },
-  { category: "Interviews", title: "The 5 most common system design anti-patterns", date: "April 28, 2026", readTime: "12 min read" },
-  { category: "Company", title: "Candidra secures Series A to redefine technical hiring", date: "April 15, 2026", readTime: "4 min read" },
-  { category: "Guides", title: "Mastering the behavioral interview: A data-driven approach", date: "March 30, 2026", readTime: "15 min read" },
-];
+export const revalidate = 0; // Disable static cache to ensure admin updates are seen immediately
 
-export default function BlogPage() {
-  return (
-    <div className="relative min-h-screen bg-black selection:bg-primary/30">
-      <LandingNavbar />
-      
-      <main className="pt-40 pb-24 relative overflow-hidden">
-        <div className="container-custom relative z-10">
-           <div className="max-w-4xl mx-auto text-center mb-24">
-              <motion.h1 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-5xl md:text-7xl font-black text-white tracking-tighter mb-8 leading-[0.9] brutal-heading uppercase"
-              >
-                Candidra <span className="text-primary brutal-shadow">Journal.</span>
-              </motion.h1>
-              <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="text-xl text-slate-400 font-bold leading-relaxed max-w-2xl mx-auto font-mono tracking-tight"
-              >
-                Deep dives into engineering, interview strategies, and AI developments from our core team.
-              </motion.p>
-           </div>
+export default async function BlogPage() {
+  let allBlogs: any[] = [];
+  try {
+    const db = getDb();
+    allBlogs = await db.select().from(blogsSchema).orderBy(sql`createdAt DESC`);
+  } catch (error) {
+    console.error("Failed to fetch blogs in server component:", error);
+  }
 
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-              {POSTS.map((post, i) => (
-                <div key={i} className="p-8 border-4 border-white/20 bg-black brutal-shadow hover:border-primary group flex flex-col cursor-pointer transition-transform hover:translate-x-[2px] hover:translate-y-[2px]">
-                   <div className="flex items-center justify-between mb-8">
-                      <span className="px-3 py-1 border-2 border-primary bg-primary/10 text-[10px] font-black uppercase tracking-widest text-primary font-mono">
-                         {post.category}
-                      </span>
-                      <span className="text-xs font-bold text-slate-500 font-mono tracking-tight">{post.readTime}</span>
-                   </div>
-                   <h3 className="text-2xl font-black text-white mb-4 leading-tight group-hover:text-primary transition-colors uppercase font-mono">
-                      {post.title}
-                   </h3>
-                   <div className="mt-auto pt-8 flex items-center justify-between text-sm">
-                      <span className="font-bold text-slate-500 font-mono tracking-tight">{post.date}</span>
-                      <ArrowRight className="w-5 h-5 text-primary opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all duration-300" />
-                   </div>
-                </div>
-              ))}
-           </div>
-        </div>
-      </main>
-    </div>
-  );
+  // Fallback if empty
+  if (allBlogs.length === 0) {
+    allBlogs = [
+      {
+        id: "1",
+        title: "How we built a real-time LLM pipeline with under 200ms latency",
+        category: "Engineering",
+        content: "Building real-time interactive voice applications with LLMs requires extreme performance tuning. Here is how we achieved under 200ms audio-to-audio roundtrip latency using streaming responses and custom caching strategies...",
+        readTime: "8 min read",
+        date: "May 10, 2026",
+        slug: "llm-pipeline-latency",
+      },
+      {
+        id: "2",
+        title: "The 5 most common system design anti-patterns",
+        category: "Interviews",
+        content: "When interviewing for senior roles, knowing what NOT to do is as important as knowing what to do. Let's break down the 5 most destructive system design mistakes and how to fix them...",
+        readTime: "12 min read",
+        date: "April 28, 2026",
+        slug: "system-design-anti-patterns",
+      },
+      {
+        id: "3",
+        title: "Candidra secures Series A to redefine technical hiring",
+        category: "Company",
+        content: "We are thrilled to announce our $12M Series A funding round to scale our intelligent mock interview platform and expand our core product engineering team...",
+        readTime: "4 min read",
+        date: "April 15, 2026",
+        slug: "candidra-series-a",
+      },
+      {
+        id: "4",
+        title: "Mastering the behavioral interview: A data-driven approach",
+        category: "Guides",
+        content: "Most software engineers fail their behavioral interviews because they do not structure their answers. Using the STAR framework, we show how to frame your engineering leadership experience with measurable impact...",
+        readTime: "15 min read",
+        date: "March 30, 2026",
+        slug: "mastering-behavioral-interview",
+      },
+    ];
+  }
+
+  return <BlogClient initialBlogs={allBlogs} />;
 }

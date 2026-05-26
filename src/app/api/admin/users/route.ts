@@ -4,6 +4,7 @@ import { getDb } from "@/db";
 import { users, subscriptions } from "@/db/schema";
 import crypto from "crypto";
 import { eq, sql } from "drizzle-orm";
+import bcrypt from "bcryptjs";
 
 const ADMIN_EMAILS = ["nawaladitya06@gmail.com"];
 
@@ -21,6 +22,58 @@ export async function GET() {
     return NextResponse.json({ users: allUsers });
   } catch (error: any) {
     console.error("Admin Users API error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const { name, email, password, plan = "free" } = await req.json();
+
+    if (!name || !email || !password) {
+      return NextResponse.json({ error: "Name, email, and password are required" }, { status: 400 });
+    }
+
+    const db = getDb();
+
+    // Check if user already exists
+    const [existingUser] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    if (existingUser) {
+      return NextResponse.json({ error: "User with this email already exists" }, { status: 409 });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const userId = `user_${Date.now()}`;
+
+    // Create the user
+    await db.insert(users).values({
+      id: userId,
+      name,
+      email,
+      password: hashedPassword,
+      plan,
+    });
+
+    if (plan !== "free") {
+      await db.insert(subscriptions).values({
+        id: crypto.randomUUID(),
+        userId,
+        plan,
+        status: "active",
+        createdAt: new Date().toISOString()
+      });
+    }
+
+    return NextResponse.json({ success: true, user: { id: userId, name, email, plan, interviewsCompleted: 0, codingRuns: 0, createdAt: new Date() } });
+  } catch (error: any) {
+    console.error("Admin Create User API error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -98,3 +151,4 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+

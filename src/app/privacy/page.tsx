@@ -1,6 +1,11 @@
-"use client";
-
 import { LandingNavbar } from "@/components/landing/LandingNavbar";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy — Candidra AI",
+  description: "Read the Candidra AI Privacy Policy to learn how we securely collect, use, and protect your personal details, code submissions, and interview records.",
+  keywords: ["Candidra privacy policy", "data security", "AI data privacy"],
+};
 
 export default function PrivacyPage() {
   return (
@@ -16,38 +21,38 @@ export default function PrivacyPage() {
 
            <div className="space-y-12">
               <section>
-                <h2 className="text-2xl font-black text-white tracking-tighter mb-4">1. Introduction</h2>
-                <p className="text-slate-400 leading-relaxed">At Candidra AI, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our AI interview simulation platform.</p>
+                 <h2 className="text-2xl font-black text-white tracking-tighter mb-4">1. Introduction</h2>
+                 <p className="text-slate-400 leading-relaxed">At Candidra AI, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our AI interview simulation platform.</p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-black text-white tracking-tighter mb-4">2. Information We Collect</h2>
-                <p className="text-slate-400 leading-relaxed mb-4">We collect information that you voluntarily provide to us when you register on the platform. This includes:</p>
-                <ul className="list-disc pl-6 space-y-2 text-slate-400">
-                   <li>Personal Information (Name, Email address)</li>
-                   <li>Professional Information (Resume data, Experience level)</li>
-                   <li>Interview Data (Audio recordings, Transcripts, Code submissions)</li>
-                </ul>
+                 <h2 className="text-2xl font-black text-white tracking-tighter mb-4">2. Information We Collect</h2>
+                 <p className="text-slate-400 leading-relaxed mb-4">We collect information that you voluntarily provide to us when you register on the platform. This includes:</p>
+                 <ul className="list-disc pl-6 space-y-2 text-slate-400">
+                    <li>Personal Information (Name, Email address)</li>
+                    <li>Professional Information (Resume data, Experience level)</li>
+                    <li>Interview Data (Audio recordings, Transcripts, Code submissions)</li>
+                 </ul>
               </section>
 
               <section>
-                <h2 className="text-2xl font-black text-white tracking-tighter mb-4">3. How We Use Your Information</h2>
-                <p className="text-slate-400 leading-relaxed mb-4">The core of our service relies on analyzing your interview performance. Your data is used exclusively to:</p>
-                <ul className="list-disc pl-6 space-y-2 text-slate-400">
-                   <li>Generate dynamic, personalized AI interview questions.</li>
-                   <li>Provide detailed feedback and scoring on your technical and communication skills.</li>
-                   <li>Improve the accuracy of our machine learning models (only with explicit opt-in consent).</li>
-                </ul>
+                 <h2 className="text-2xl font-black text-white tracking-tighter mb-4">3. How We Use Your Information</h2>
+                 <p className="text-slate-400 leading-relaxed mb-4">The core of our service relies on analyzing your interview performance. Your data is used exclusively to:</p>
+                 <ul className="list-disc pl-6 space-y-2 text-slate-400">
+                    <li>Generate dynamic, personalized AI interview questions.</li>
+                    <li>Provide detailed feedback and scoring on your technical and communication skills.</li>
+                    <li>Improve the accuracy of our machine learning models (only with explicit opt-in consent).</li>
+                 </ul>
               </section>
 
               <section>
-                <h2 className="text-2xl font-black text-white tracking-tighter mb-4">4. Data Security</h2>
-                <p className="text-slate-400 leading-relaxed">We use administrative, technical, and physical security measures to help protect your personal information. While we have taken reasonable steps to secure the personal information you provide to us, please be aware that despite our efforts, no security measures are perfect or impenetrable.</p>
+                 <h2 className="text-2xl font-black text-white tracking-tighter mb-4">4. Data Security</h2>
+                 <p className="text-slate-400 leading-relaxed">We use administrative, technical, and physical security measures to help protect your personal information. While we have taken reasonable steps to secure the personal information you provide to us, please be aware that despite our efforts, no security measures are perfect or impenetrable.</p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-black text-white tracking-tighter mb-4">5. Contact Us</h2>
-                <p className="text-slate-400 leading-relaxed">If you have questions or comments about this Privacy Policy, please contact us at: <a href="mailto:privacy@candidra.ai" className="text-purple-400 hover:text-purple-300">privacy@candidra.ai</a></p>
+                 <h2 className="text-2xl font-black text-white tracking-tighter mb-4">5. Contact Us</h2>
+                 <p className="text-slate-400 leading-relaxed">If you have questions or comments about this Privacy Policy, please contact us at: <a href="mailto:privacy@candidra.ai" className="text-purple-400 hover:text-purple-300">privacy@candidra.ai</a></p>
               </section>
            </div>
         </div>
