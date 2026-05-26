@@ -2,21 +2,22 @@
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import {
-  Users, Briefcase, FileText, TrendingUp, Lock, Crown,
-  ShieldCheck, Activity, RefreshCw, UserCheck, Zap,
-  CheckCircle, Clock, AlertTriangle, Server, Database,
-  Cpu, Globe, ChevronUp, ChevronDown, Minus
+  Users, Briefcase, FileText, TrendingUp, Lock,
+  Crown, ShieldCheck, RefreshCw, UserCheck, Zap,
+  CheckCircle, CreditCard, Mail, ArrowRight, Activity,
+  Database, Server, Globe,
 } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, BarChart, Bar,
-  PieChart, Pie, Cell, RadialBarChart, RadialBar
+  PieChart, Pie, Cell,
 } from "recharts";
 import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const ADMIN_EMAILS = ["nawaladitya06@gmail.com"];
 
@@ -27,6 +28,7 @@ interface AdminStats {
   totalResumes: number;
   freeUsers: number;
   proUsers: number;
+  enterpriseUsers: number;
   avgScore: number;
   recentUsers: {
     id: string;
@@ -38,63 +40,87 @@ interface AdminStats {
 }
 
 const MOCK_TRAFFIC = [
-  { day: "Mon", users: 12, interviews: 34, resumes: 8 },
-  { day: "Tue", users: 19, interviews: 41, resumes: 14 },
-  { day: "Wed", users: 9,  interviews: 28, resumes: 5  },
-  { day: "Thu", users: 24, interviews: 55, resumes: 21 },
-  { day: "Fri", users: 31, interviews: 62, resumes: 18 },
-  { day: "Sat", users: 18, interviews: 39, resumes: 11 },
-  { day: "Sun", users: 22, interviews: 47, resumes: 16 },
+  { day: "Mon", users: 12, interviews: 34 },
+  { day: "Tue", users: 19, interviews: 41 },
+  { day: "Wed", users: 9,  interviews: 28 },
+  { day: "Thu", users: 24, interviews: 55 },
+  { day: "Fri", users: 31, interviews: 62 },
+  { day: "Sat", users: 18, interviews: 39 },
+  { day: "Sun", users: 22, interviews: 47 },
 ];
 
 const SYSTEM_SERVICES = [
-  { name: "Cloudflare D1 (Database)", status: "operational", latency: "12ms" },
-  { name: "NextAuth (Auth Engine)", status: "operational", latency: "8ms"  },
-  { name: "Gemini AI (Analysis)", status: "operational", latency: "220ms" },
-  { name: "Cloudinary (Storage)",  status: "operational", latency: "45ms" },
-  { name: "Vercel (Hosting)",      status: "operational", latency: "3ms"  },
+  { name: "Cloudflare D1", label: "Database",   status: "operational", latency: "12ms",  icon: Database },
+  { name: "NextAuth",      label: "Auth Engine", status: "operational", latency: "8ms",   icon: ShieldCheck },
+  { name: "Gemini AI",     label: "Analysis",    status: "operational", latency: "220ms", icon: Zap },
+  { name: "Cloudinary",    label: "Storage",     status: "operational", latency: "45ms",  icon: Globe },
+  { name: "Vercel",        label: "Hosting",     status: "operational", latency: "3ms",   icon: Server },
 ];
 
-const PIE_COLORS = ["#1e293b", "#3b82f6"];
+const QUICK_LINKS = [
+  { label: "Users",    href: "/admin/users",    icon: Users,      color: "border-blue-500/40 hover:border-blue-500 text-blue-400",   bg: "bg-blue-500/5 hover:bg-blue-500/10"    },
+  { label: "Billing",  href: "/admin/billing",  icon: CreditCard, color: "border-primary/40 hover:border-primary text-primary",       bg: "bg-primary/5 hover:bg-primary/10"      },
+  { label: "Contacts", href: "/admin/contacts", icon: Mail,       color: "border-purple-500/40 hover:border-purple-500 text-purple-400", bg: "bg-purple-500/5 hover:bg-purple-500/10" },
+];
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Sub-components ─────────────────────────────────────────────────────────
 
 function StatCard({
-  label, value, sub, icon, color, delay = 0,
+  label, value, sub, icon, color, trend, delay = 0,
 }: {
   label: string; value: string | number; sub?: string;
-  icon: React.ReactNode; color: string; delay?: number;
+  icon: React.ReactNode; color: string; trend?: string; delay?: number;
 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay }}
+      transition={{ duration: 0.45, delay }}
       className={cn(
-        "p-6 border-4 bg-black brutal-shadow flex flex-col gap-5 group hover:-translate-y-1 hover:translate-x-0 transition-transform duration-200",
+        "p-6 border-4 bg-black brutal-shadow flex flex-col gap-4 group cursor-default",
+        "hover:-translate-y-1 transition-transform duration-200",
         color
       )}
     >
       <div className="flex items-center justify-between">
         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 font-mono">{label}</span>
-        <div className="w-9 h-9 border-2 flex items-center justify-center opacity-60 group-hover:opacity-100 transition-opacity" style={{ borderColor: "currentColor" }}>
+        <div className="w-9 h-9 border-2 flex items-center justify-center opacity-50 group-hover:opacity-100 transition-opacity" style={{ borderColor: "currentColor" }}>
           {icon}
         </div>
       </div>
       <div>
-        <p className="text-5xl font-black text-white font-mono leading-none">{value}</p>
+        <p className="text-5xl font-black text-white font-mono leading-none tabular-nums">{value}</p>
         {sub && <p className="text-[10px] text-slate-500 font-mono mt-2 uppercase tracking-widest">{sub}</p>}
       </div>
+      {trend && (
+        <div className="text-[10px] font-bold text-emerald-400 font-mono flex items-center gap-1">
+          <span>↑</span>{trend}
+        </div>
+      )}
     </motion.div>
   );
 }
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-3 mb-6">
+    <div className="flex items-center gap-3 mb-5">
       <div className="w-1 h-6 bg-primary" />
-      <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white font-mono">{children}</h3>
+      <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-white font-mono">{children}</h3>
     </div>
+  );
+}
+
+function PlanBadge({ plan }: { plan: string }) {
+  const styles: Record<string, string> = {
+    enterprise: "text-purple-400 bg-purple-500/10 border-purple-500/40",
+    pro:        "text-primary  bg-primary/10  border-primary/30",
+    free:       "text-slate-500 bg-white/5   border-white/10",
+  };
+  const labels: Record<string, string> = { enterprise: "⚡ Enterprise", pro: "★ Pro", free: "Free" };
+  return (
+    <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 border font-mono", styles[plan] ?? styles.free)}>
+      {labels[plan] ?? plan}
+    </span>
   );
 }
 
@@ -132,7 +158,7 @@ export default function AdminDashboardPage() {
     fetchStats();
   }, [session, status, isAdmin, fetchStats]);
 
-  // ── Access denied ──────────────────────────────────────────────────────────
+  // ── Access denied ─────────────────────────────────────────────────────────
   if (status !== "loading" && (!session || !isAdmin)) {
     return (
       <DashboardLayout title="Admin" subtitle="">
@@ -156,7 +182,7 @@ export default function AdminDashboardPage() {
     );
   }
 
-  // ── Loading ────────────────────────────────────────────────────────────────
+  // ── Loading ───────────────────────────────────────────────────────────────
   if (loading) {
     return (
       <DashboardLayout title="Admin Command Center" subtitle="Fetching live data from the database...">
@@ -179,34 +205,34 @@ export default function AdminDashboardPage() {
     ? Math.round((stats.completedInterviews / stats.totalInterviews) * 100)
     : 0;
 
+  const enterpriseUsers = stats?.enterpriseUsers ?? 0;
   const planData = [
-    { name: "Free", value: stats?.freeUsers  ?? 0 },
-    { name: "Pro",  value: stats?.proUsers   ?? 0 },
-  ];
-
-  const radialData = [{ value: completionPct, fill: "#3b82f6" }];
+    { name: "Free",       value: stats?.freeUsers    ?? 0, color: "#334155" },
+    { name: "Pro",        value: stats?.proUsers     ?? 0, color: "#3b82f6" },
+    { name: "Enterprise", value: enterpriseUsers,          color: "#a855f7" },
+  ].filter(d => d.value > 0);
 
   return (
     <DashboardLayout title="Admin Command Center" subtitle="Live system metrics — production database">
 
-      {/* ── Top bar ─────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10">
+      {/* ── Top bar ──────────────────────────────────────────────────────────── */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-3 px-4 py-2 border-2 border-primary/30 bg-primary/5">
           <ShieldCheck className="w-4 h-4 text-primary" />
           <span className="text-[10px] font-black text-primary font-mono uppercase tracking-widest">
-            Authenticated as {session?.user?.email}
+            Admin · {session?.user?.email}
           </span>
         </div>
         <div className="flex items-center gap-4">
           {lastUpdated && (
             <span className="text-[10px] text-slate-600 font-mono uppercase tracking-widest hidden sm:block">
-              Last synced: {lastUpdated}
+              Updated: {lastUpdated}
             </span>
           )}
           <button
             onClick={() => fetchStats(true)}
             disabled={refreshing}
-            className="flex items-center gap-2 px-4 py-2 border-2 border-white/20 bg-black text-white text-[10px] font-black uppercase font-mono tracking-widest hover:border-primary hover:text-primary transition-all brutal-shadow-sm"
+            className="flex items-center gap-2 px-4 py-2 border-2 border-white/20 bg-black text-white text-[10px] font-black uppercase font-mono tracking-widest hover:border-primary hover:text-primary transition-all brutal-shadow-sm disabled:opacity-40"
           >
             <RefreshCw className={cn("w-3 h-3", refreshing && "animate-spin")} />
             Refresh
@@ -214,15 +240,36 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* ── KPI Grid ────────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
-        <StatCard delay={0.05} label="Total Users"       value={stats?.totalUsers      ?? 0}   icon={<Users      className="w-4 h-4" />} color="border-blue-500   text-blue-400"   sub="registered accounts" />
-        <StatCard delay={0.10} label="Interviews Run"    value={stats?.totalInterviews ?? 0}   icon={<Briefcase  className="w-4 h-4" />} color="border-primary  text-primary"    sub={`${stats?.completedInterviews ?? 0} completed`} />
-        <StatCard delay={0.15} label="Resumes Uploaded"  value={stats?.totalResumes    ?? 0}   icon={<FileText   className="w-4 h-4" />} color="border-purple-500 text-purple-400" sub="AI-parsed PDFs" />
-        <StatCard delay={0.20} label="Avg. AI Score"     value={`${stats?.avgScore ?? 0}%`}    icon={<TrendingUp className="w-4 h-4" />} color="border-emerald-500 text-emerald-400" sub="across all sessions" />
+      {/* ── Quick Nav ────────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-3 gap-4 mb-8">
+        {QUICK_LINKS.map((l, i) => (
+          <motion.div key={l.href} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+            <Link
+              href={l.href}
+              className={cn(
+                "flex items-center justify-between p-4 border-2 transition-all duration-200 group",
+                l.color, l.bg
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <l.icon className="w-5 h-5" />
+                <span className="text-xs font-black uppercase tracking-widest font-mono">{l.label}</span>
+              </div>
+              <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </Link>
+          </motion.div>
+        ))}
       </div>
 
-      {/* ── Row 2: Traffic chart + Completion ring + Plan split ─────────────── */}
+      {/* ── KPI Grid ─────────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <StatCard delay={0.05} label="Total Users"      value={stats?.totalUsers      ?? 0} icon={<Users      className="w-4 h-4" />} color="border-blue-500   text-blue-400"    sub="registered accounts" />
+        <StatCard delay={0.10} label="Interviews Run"   value={stats?.totalInterviews ?? 0} icon={<Briefcase  className="w-4 h-4" />} color="border-primary  text-primary"      sub={`${stats?.completedInterviews ?? 0} completed`} />
+        <StatCard delay={0.15} label="Resumes Parsed"   value={stats?.totalResumes    ?? 0} icon={<FileText   className="w-4 h-4" />} color="border-purple-500 text-purple-400" sub="AI-analyzed PDFs" />
+        <StatCard delay={0.20} label="Avg AI Score"     value={`${stats?.avgScore ?? 0}%`}  icon={<TrendingUp className="w-4 h-4" />} color="border-emerald-500 text-emerald-400" sub="across all sessions" />
+      </div>
+
+      {/* ── Row 2: Traffic chart + Completion + Plan ─────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
 
         {/* Traffic (3 cols) */}
@@ -230,8 +277,8 @@ export default function AdminDashboardPage() {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
           className="lg:col-span-3 p-6 border-4 border-white/20 bg-black brutal-shadow"
         >
-          <SectionHeader>Platform Activity (7-day snapshot)</SectionHeader>
-          <div className="h-[260px]">
+          <SectionHeader>Platform Activity — 7-day snapshot</SectionHeader>
+          <div className="h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={MOCK_TRAFFIC} margin={{ left: -20, right: 5 }}>
                 <defs>
@@ -257,10 +304,10 @@ export default function AdminDashboardPage() {
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex gap-6 mt-4">
+          <div className="flex gap-6 mt-3">
             {[{ color: "#3b82f6", label: "New Users" }, { color: "#a855f7", label: "Interviews" }].map(l => (
               <div key={l.label} className="flex items-center gap-2">
-                <div className="w-3 h-[2px]" style={{ background: l.color }} />
+                <div className="w-4 h-[2px]" style={{ background: l.color }} />
                 <span className="text-[10px] text-slate-500 font-mono uppercase font-bold">{l.label}</span>
               </div>
             ))}
@@ -275,7 +322,7 @@ export default function AdminDashboardPage() {
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.30 }}
             className="flex-1 p-6 border-4 border-white/20 bg-black brutal-shadow"
           >
-            <SectionHeader>Interview Completion</SectionHeader>
+            <SectionHeader>Interview Completion Rate</SectionHeader>
             <div className="flex items-center gap-6">
               <div className="relative w-28 h-28 flex-shrink-0">
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
@@ -295,7 +342,7 @@ export default function AdminDashboardPage() {
               </div>
               <div className="flex flex-col gap-3 flex-1">
                 {[
-                  { label: "Completed", val: stats?.completedInterviews ?? 0, color: "text-emerald-400" },
+                  { label: "Completed",   val: stats?.completedInterviews ?? 0, color: "text-emerald-400" },
                   { label: "In Progress", val: (stats?.totalInterviews ?? 0) - (stats?.completedInterviews ?? 0), color: "text-primary" },
                 ].map(r => (
                   <div key={r.label} className="p-3 border-2 border-white/5 bg-white/[0.02]">
@@ -314,33 +361,32 @@ export default function AdminDashboardPage() {
           >
             <SectionHeader>Plan Distribution</SectionHeader>
             <div className="flex items-center gap-4">
-              <PieChart width={110} height={110}>
-                <Pie data={planData} cx={50} cy={50} innerRadius={30} outerRadius={50} dataKey="value" strokeWidth={0} startAngle={90} endAngle={-270}>
-                  {planData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i]} />)}
+              <PieChart width={100} height={100}>
+                <Pie data={planData} cx={45} cy={45} innerRadius={28} outerRadius={45} dataKey="value" strokeWidth={0} startAngle={90} endAngle={-270}>
+                  {planData.map((d, i) => <Cell key={i} fill={d.color} />)}
                 </Pie>
               </PieChart>
-              <div className="flex flex-col gap-3 flex-1">
-                <div className="flex items-center justify-between p-3 border-2 border-white/5">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-slate-700" />
-                    <span className="text-[10px] text-slate-400 font-mono uppercase font-bold">Free</span>
+              <div className="flex flex-col gap-2 flex-1">
+                {[
+                  { label: "Free",       val: stats?.freeUsers    ?? 0, color: "text-slate-400",  dot: "#334155" },
+                  { label: "Pro",        val: stats?.proUsers     ?? 0, color: "text-primary",    dot: "#3b82f6" },
+                  { label: "Enterprise", val: enterpriseUsers,           color: "text-purple-400", dot: "#a855f7" },
+                ].map(r => (
+                  <div key={r.label} className="flex items-center justify-between p-2 border border-white/5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: r.dot }} />
+                      <span className="text-[10px] text-slate-400 font-mono uppercase font-bold">{r.label}</span>
+                    </div>
+                    <span className={cn("text-base font-black font-mono", r.color)}>{r.val}</span>
                   </div>
-                  <span className="text-lg font-black text-white font-mono">{stats?.freeUsers ?? 0}</span>
-                </div>
-                <div className="flex items-center justify-between p-3 border-2 border-primary/30 bg-primary/5">
-                  <div className="flex items-center gap-2">
-                    <Crown className="w-3 h-3 text-primary" />
-                    <span className="text-[10px] text-primary font-mono uppercase font-black">Pro</span>
-                  </div>
-                  <span className="text-lg font-black text-primary font-mono">{stats?.proUsers ?? 0}</span>
-                </div>
+                ))}
               </div>
             </div>
           </motion.div>
         </div>
       </div>
 
-      {/* ── Row 3: Recent users + System status ─────────────────────────────── */}
+      {/* ── Row 3: Recent users + System status ──────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
         {/* Users table (3 cols) */}
@@ -348,14 +394,15 @@ export default function AdminDashboardPage() {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.40 }}
           className="lg:col-span-3 border-4 border-white/20 bg-black brutal-shadow overflow-hidden"
         >
-          <div className="px-6 py-5 border-b-2 border-white/10 flex items-center justify-between">
+          <div className="px-6 py-4 border-b-2 border-white/10 flex items-center justify-between">
             <SectionHeader>Recent Registrations</SectionHeader>
-            <span className="text-[9px] font-black text-slate-600 font-mono uppercase tracking-widest">Latest 5</span>
+            <Link href="/admin/users" className="text-[9px] font-black text-primary font-mono uppercase tracking-widest hover:underline flex items-center gap-1">
+              View All <ArrowRight className="w-3 h-3" />
+            </Link>
           </div>
 
-          {/* Table header */}
           <div className="grid grid-cols-12 px-6 py-3 border-b border-white/5 bg-white/[0.01]">
-            {["User", "Email", "Plan", "Interviews"].map((h, i) => (
+            {["User", "Email", "Plan", "Done"].map((h, i) => (
               <span key={h} className={cn("text-[9px] font-black uppercase tracking-widest text-slate-600 font-mono",
                 i === 0 ? "col-span-3" : i === 1 ? "col-span-5" : i === 2 ? "col-span-2" : "col-span-2 text-right"
               )}>{h}</span>
@@ -374,27 +421,16 @@ export default function AdminDashboardPage() {
                   transition={{ delay: 0.45 + i * 0.05 }}
                   className="grid grid-cols-12 px-6 py-4 items-center hover:bg-white/[0.02] transition-colors group"
                 >
-                  {/* Avatar + Name */}
                   <div className="col-span-3 flex items-center gap-3">
                     <div className="w-8 h-8 border-2 border-white/20 bg-primary/10 flex items-center justify-center flex-shrink-0 font-black text-xs text-primary font-mono group-hover:border-primary transition-colors">
                       {(u.name || u.email || "?")[0].toUpperCase()}
                     </div>
                     <span className="text-xs font-bold text-white font-mono truncate">{u.name || "—"}</span>
                   </div>
-                  {/* Email */}
                   <span className="col-span-5 text-[10px] text-slate-500 font-mono truncate pr-2">{u.email}</span>
-                  {/* Plan badge */}
                   <div className="col-span-2">
-                    <span className={cn(
-                      "text-[9px] font-black uppercase px-2 py-0.5 border font-mono",
-                      u.plan === "pro"
-                        ? "text-primary bg-primary/10 border-primary/30"
-                        : "text-slate-500 bg-white/5 border-white/10"
-                    )}>
-                      {u.plan === "pro" ? "★ Pro" : "Free"}
-                    </span>
+                    <PlanBadge plan={u.plan} />
                   </div>
-                  {/* Interviews count */}
                   <div className="col-span-2 text-right">
                     <span className="text-sm font-black text-white font-mono">{u.interviewsCompleted}</span>
                   </div>
@@ -409,20 +445,19 @@ export default function AdminDashboardPage() {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
           className="lg:col-span-2 border-4 border-white/20 bg-black brutal-shadow overflow-hidden"
         >
-          <div className="px-6 py-5 border-b-2 border-white/10">
+          <div className="px-6 py-4 border-b-2 border-white/10">
             <SectionHeader>System Health</SectionHeader>
           </div>
 
-          {/* Overall status banner */}
-          <div className="mx-6 mt-5 mb-5 flex items-center gap-3 p-4 border-2 border-emerald-500/30 bg-emerald-500/5">
+          <div className="mx-6 mt-5 mb-5 flex items-center gap-3 p-3 border-2 border-emerald-500/30 bg-emerald-500/5">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <div>
-              <p className="text-xs font-black text-emerald-400 font-mono uppercase tracking-widest">All Systems Operational</p>
+              <p className="text-[11px] font-black text-emerald-400 font-mono uppercase tracking-widest">All Systems Operational</p>
               <p className="text-[9px] text-slate-600 font-mono mt-0.5">No incidents detected</p>
             </div>
           </div>
 
-          <div className="px-6 pb-6 flex flex-col gap-2">
+          <div className="px-6 pb-4 flex flex-col gap-2">
             {SYSTEM_SERVICES.map((svc, i) => (
               <motion.div
                 key={svc.name}
@@ -431,20 +466,24 @@ export default function AdminDashboardPage() {
                 transition={{ delay: 0.5 + i * 0.06 }}
                 className="flex items-center justify-between p-3 border-2 border-white/[0.06] hover:border-white/10 transition-colors"
               >
-                <span className="text-[10px] font-bold text-slate-400 font-mono">{svc.name}</span>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <svc.icon className="w-3.5 h-3.5 text-slate-500" />
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-400 font-mono">{svc.name}</p>
+                    <p className="text-[8px] text-slate-600 font-mono">{svc.label}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
                   <span className="text-[9px] text-slate-600 font-mono">{svc.latency}</span>
-                  <span className="text-[9px] font-black uppercase text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 font-mono">
-                    OK
-                  </span>
+                  <span className="text-[9px] font-black uppercase text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 font-mono">OK</span>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          {/* Quick DB snapshot */}
+          {/* DB snapshot */}
           <div className="mx-6 mb-6 p-4 border-2 border-white/10 bg-white/[0.01]">
-            <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest font-mono mb-3">DB Snapshot</p>
+            <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest font-mono mb-3">Live DB Snapshot</p>
             <div className="grid grid-cols-3 gap-2 text-center">
               {[
                 { label: "Users",      val: stats?.totalUsers      ?? 0 },
@@ -452,7 +491,7 @@ export default function AdminDashboardPage() {
                 { label: "Resumes",    val: stats?.totalResumes    ?? 0 },
               ].map(d => (
                 <div key={d.label} className="border-2 border-white/5 p-2">
-                  <p className="text-base font-black text-white font-mono">{d.val}</p>
+                  <p className="text-base font-black text-white font-mono tabular-nums">{d.val}</p>
                   <p className="text-[8px] text-slate-600 font-mono uppercase">{d.label}</p>
                 </div>
               ))}

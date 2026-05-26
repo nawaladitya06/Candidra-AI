@@ -73,13 +73,15 @@ export async function POST(req: Request) {
     const existing = await db.select().from(subscriptions).where(eq(subscriptions.userId, userId)).limit(1);
     
     let currentPeriodEnd: Date | null = null;
-    if (daysValid) {
+    if (daysValid && parseInt(daysValid) > 0) {
        currentPeriodEnd = new Date(Date.now() + (parseInt(daysValid) * 24 * 60 * 60 * 1000));
     }
 
+    // D1 integer timestamp columns need a Date object; drizzle handles the conversion
+    // but we must make sure null is passed explicitly when no expiry is set
     if (existing.length > 0) {
       await db.update(subscriptions)
-        .set({ plan, status, currentPeriodEnd })
+        .set({ plan, status, currentPeriodEnd: currentPeriodEnd ?? null })
         .where(eq(subscriptions.userId, userId));
     } else {
       await db.insert(subscriptions).values({
@@ -87,7 +89,7 @@ export async function POST(req: Request) {
         userId,
         plan,
         status,
-        currentPeriodEnd,
+        currentPeriodEnd: currentPeriodEnd ?? null,
         createdAt: new Date().toISOString()
       });
     }

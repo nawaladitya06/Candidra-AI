@@ -23,6 +23,7 @@ export async function GET() {
     const [totalResumesRow]     = await db.select({ value: count() }).from(resumes);
     const [freeUsersRow]        = await db.select({ value: count() }).from(users).where(eq(users.plan, "free"));
     const [proUsersRow]         = await db.select({ value: count() }).from(users).where(eq(users.plan, "pro"));
+    const [enterpriseUsersRow]  = await db.select({ value: count() }).from(users).where(eq(users.plan, "enterprise"));
     const [avgScoreRow]         = await db.select({ value: avg(interviews.score) }).from(interviews);
 
     const recentUsers = await db
@@ -44,6 +45,7 @@ export async function GET() {
       totalResumes:        totalResumesRow?.value     ?? 0,
       freeUsers:           freeUsersRow?.value        ?? 0,
       proUsers:            proUsersRow?.value         ?? 0,
+      enterpriseUsers:     enterpriseUsersRow?.value  ?? 0,
       avgScore:            Math.round(Number(avgScoreRow?.value ?? 0)),
       recentUsers,
     });

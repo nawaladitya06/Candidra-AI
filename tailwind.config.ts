@@ -63,9 +63,10 @@ const config = {
         display: ['JetBrains Mono', 'monospace'],
       },
       boxShadow: {
-        'brutal': '4px 4px 0px 0px rgba(255, 255, 255, 0.15)',
-        'brutal-hover': '2px 2px 0px 0px rgba(255, 255, 255, 0.15)',
-        'brutal-accent': '4px 4px 0px 0px var(--primary)',
+        'brutal':         '6px 6px 0px 0px rgba(255, 255, 255, 0.10)',
+        'brutal-hover':   '2px 2px 0px 0px rgba(255, 255, 255, 0.10)',
+        'brutal-sm':      '3px 3px 0px 0px rgba(255, 255, 255, 0.08)',
+        'brutal-accent':  '4px 4px 0px 0px var(--primary)',
         'brutal-accent-hover': '2px 2px 0px 0px var(--primary)',
       }
     },
